@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>AMPHOUR — Добавление</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="screen">
+    <div class="app-header">
+      <div class="brand">AMPHOUR</div>
+      <div class="brand-sub">Расчёт времени работы</div>
+      <h1>Добавление <span class="draft-badge">Черновик</span></h1>
+      <p class="subtitle">Заполните параметры аккумулятора</p>
+    </div>
+
+    {{#if draft}}
+      <div class="draft-media">
+        <div class="media-box">🖼<br />{{draft.modelName}}.jpg</div>
+        <div class="media-box">🎞<br />{{draft.modelName}}.mp4</div>
+      </div>
+
+      <div class="draft-field">
+        <label>Название модели</label>
+        <div class="value">{{draft.modelName}}</div>
+      </div>
+      <div class="draft-field">
+        <label>Тип химического состава</label>
+        <div class="value">{{draft.chemistryType}}</div>
+      </div>
+      <div class="draft-field">
+        <label>Ёмкость, мА·ч</label>
+        <div class="value">{{draft.capacityMah}}</div>
+      </div>
+      <div class="draft-field">
+        <label>Напряжение, В</label>
+        <div class="value">{{draft.nominalVoltageV}}</div>
+      </div>
+    {{else}}
+      <p style="padding: 0 16px; color: #767676;">Черновик не найден в коллекции.</p>
+    {{/if}}
+
+    <nav class="tabbar">
+      <a href="/01-lenta">
+        <span class="icon">▶</span>Лента
+      </a>
+      <a class="active" href="/02-dobavlenie">
+        <span class="icon">+</span>Добавление
+      </a>
+      <a href="/03-plitka">
+        <span class="icon">▦</span>Плитка
+      </a>
+    </nav>
+  </div>
+</body>
+</html>

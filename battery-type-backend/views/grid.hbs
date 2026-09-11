@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>AMPHOUR — Плитка</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="screen">
+    <div class="app-header">
+      <div class="brand">AMPHOUR</div>
+      <div class="brand-sub">Расчёт времени работы</div>
+      <h1>Аккумуляторы</h1>
+      <p class="subtitle">Каталог типов аккумуляторов</p>
+    </div>
+
+    <!-- Без JavaScript: обычная GET-форма, значение сохраняется через value="" -->
+    <form class="filter-section" method="GET" action="/03-plitka">
+      <div class="filter-label">Ёмкость, мА·ч</div>
+      <div class="filter-row">
+        <input
+          type="range"
+          name="minCapacityMah"
+          min="1000"
+          max="5000"
+          step="100"
+          value="{{#if currentMinCapacityMah}}{{currentMinCapacityMah}}{{else}}1000{{/if}}"
+        />
+        <span class="filter-value">
+          {{#if currentMinCapacityMah}}{{currentMinCapacityMah}}{{else}}1000{{/if}}
+        </span>
+      </div>
+      <button class="filter-submit" type="submit">Фильтровать</button>
+    </form>
+
+    <div class="grid">
+      {{#each accumulators}}
+        <a class="acc-card" href="/01-lenta/{{this.id}}">
+          <div class="acc-thumb" style="background-image: url('{{this.imageUrl}}')"></div>
+          <div class="acc-chem">{{this.chemistryType}}</div>
+          <div class="acc-name">{{this.modelName}}</div>
+          <div class="acc-meta">
+            <span class="capacity">{{this.capacityMah}} мА·ч</span>
+            <span>♥ {{this.likesCount}}</span>
+          </div>
+        </a>
+      {{/each}}
+    </div>
+
+    <nav class="tabbar">
+      <a href="/01-lenta">
+        <span class="icon">▶</span>Лента
+      </a>
+      <a href="/02-dobavlenie">
+        <span class="icon">+</span>Добавление
+      </a>
+      <a class="active" href="/03-plitka">
+        <span class="icon">▦</span>Плитка
+      </a>
+    </nav>
+  </div>
+</body>
+</html>
