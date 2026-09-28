@@ -6,11 +6,11 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  app.useStaticAssets(join(__dirname, '..', 'public'));
-  app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  app.useStaticAssets(join(process.cwd(), 'public'));
+  app.setBaseViewsDir(join(process.cwd(), 'views'));
   app.setViewEngine('hbs');
 
   await app.listen(3000);
-  console.log('AMPHOUR backend запущен: http://localhost:3000/03-plitka');
+  console.log('AMPHOUR backend запущен: http://172.23.98.58:3000/03-plitka');
 }
 bootstrap();

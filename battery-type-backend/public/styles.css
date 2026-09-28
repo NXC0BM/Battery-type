@@ -311,3 +311,20 @@ body {
   color: #fc8507;
   font-weight: 700;
 }
+.acc-card-wrapper {
+  position: relative;
+}
+.delete-form {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+}
+.delete-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.85);
+  color: #767676;
+  cursor: pointer;
+}

@@ -1,69 +1,84 @@
-import { Controller, Get, Param, Query, Render, NotFoundException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Render,
+  Query,
+  Body,
+  ParseIntPipe,
+  Redirect,
+} from '@nestjs/common';
 import { AccumulatorsService } from './accumulators.service';
+
+const CURRENT_USER_ID = 1; // без авторизации — фиксированный пользователь
 
 @Controller()
 export class AccumulatorsController {
   constructor(private readonly accumulatorsService: AccumulatorsService) {}
 
-  // Страница "Плитка": /03-plitka?minCapacityMah=2000
+  // GET — Плитка (ORM)
   @Get('03-plitka')
   @Render('grid')
-  showGrid(@Query('minCapacityMah') minCapacityMah?: string) {
-    const parsed = minCapacityMah ? Number(minCapacityMah) : undefined;
-    const accumulators = this.accumulatorsService.findPublished(parsed);
-    return { accumulators, currentMinCapacityMah: minCapacityMah || '' };
+  async getGrid(@Query('minCapacityMah') minCapacityMah?: string) {
+    const min = minCapacityMah ? parseInt(minCapacityMah, 10) : undefined;
+    const accumulators = await this.accumulatorsService.findPublished(min);
+    return { accumulators, currentMinCapacityMah: min };
   }
 
-  // Страница "Добавление": /02-dobavlenie
+  // GET — Добавление (ORM, есть ли черновик)
   @Get('02-dobavlenie')
   @Render('draft-form')
-  showDraft() {
-    const draft = this.accumulatorsService.findDraft();
+  async getDraftForm() {
+    const draft = await this.accumulatorsService.findDraftByUser(CURRENT_USER_ID);
     return { draft };
   }
 
-  // Страница "Лента": /01-lenta/:id?next=true
+  // GET — Лента (курсор, 1 строка)
   @Get('01-lenta/:id')
   @Render('feed')
-  showFeed(@Param('id') id: string, @Query('next') next?: string) {
-    const numericId = Number(id);
-    const accumulator =
-      next === 'true'
-        ? this.accumulatorsService.findNextAfter(numericId)
-        : this.accumulatorsService.findOnePublished(numericId);
-
-    if (!accumulator) {
-      throw new NotFoundException('Аккумулятор не найден или не опубликован');
-    }
+  async getFeedById(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('next') next?: string,
+  ) {
+    const accumulator = await this.accumulatorsService.getFeedItem(id, next === 'true');
     return { accumulator };
   }
 
-  // Тот же экран "Лента" без id — открывает первый опубликованный
   @Get('01-lenta')
   @Render('feed')
-  showFeedDefault() {
-    const accumulator = this.accumulatorsService.findNextAfter(0);
+  async getFeed() {
+    const accumulator = await this.accumulatorsService.getFeedItem();
     return { accumulator };
   }
 
-  // ---- Чистые JSON-эндпоинты (для вкладки Network на защите) ----
+  // POST — кнопка "Далее" (ORM, создание/обновление черновика)
+  @Post('02-dobavlenie/next')
+  @Redirect('/02-dobavlenie', 302)
+  async createDraft(@Body('modelName') modelName: string) {
+    await this.accumulatorsService.createOrUpdateDraft(CURRENT_USER_ID, modelName);
+  }
 
-  @Get('api/accumulators')
-  apiFindPublished(@Query('minCapacityMah') minCapacityMah?: string) {
-    return this.accumulatorsService.findPublished(
-      minCapacityMah ? Number(minCapacityMah) : undefined,
+  // POST — кнопка "Опубликовать" (ORM)
+  @Post('02-dobavlenie/publish')
+  @Redirect('/03-plitka', 302)
+  async publishDraft(
+    @Body('shortDescription') shortDescription: string,
+    @Body('capacityMah') capacityMah: string,
+    @Body('nominalVoltageV') nominalVoltageV: string,
+  ) {
+    await this.accumulatorsService.publishDraft(
+      CURRENT_USER_ID,
+      shortDescription,
+      parseInt(capacityMah, 10),
+      parseFloat(nominalVoltageV),
     );
   }
 
-  @Get('api/accumulators/draft')
-  apiFindDraft() {
-    return this.accumulatorsService.findDraft();
-  }
-
-  @Get('api/accumulators/:id')
-  apiFindOneOrNext(@Param('id') id: string, @Query('next') next?: string) {
-    return next === 'true'
-      ? this.accumulatorsService.findNextAfter(Number(id))
-      : this.accumulatorsService.findOnePublished(Number(id));
+  // POST — логическое удаление (raw SQL UPDATE, без ORM)
+  @Post('03-plitka/delete')
+  @Redirect('/03-plitka', 302)
+  async deleteAccumulator(@Body('id') id: string) {
+    await this.accumulatorsService.deleteAccumulator(parseInt(id, 10));
   }
 }

@@ -1,160 +1,124 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, MoreThanOrEqual } from 'typeorm';
 import { Accumulator } from './entities/accumulator.entity';
 import { AccumulatorStatus } from './entities/accumulator-status.enum';
-import { MinioService } from '../minio/minio.service';
+import { Like } from '../likes/like.entity';
 
 @Injectable()
 export class AccumulatorsService {
-  // Коллекция — просто массив в памяти, без БД (по заданию sprint 1)
-  private accumulators: Accumulator[] = [
-    {
-      id: 1,
-      modelName: 'Samsung INR18650-25R',
-      chemistryType: 'Li-ion',
-      capacityMah: 2500,
-      nominalVoltageV: 3.6,
-      description:
-        'Высокотоковый цилиндрический аккумулятор 18650 для мощных устройств.',
-      imageKey: 'acc-samsung-25r.jpg',
-      videoKey: 'acc-samsung-25r.mp4',
-      status: AccumulatorStatus.PUBLISHED,
-      likedByEngineerIds: [3, 7, 12],
-    },
-    {
-      id: 2,
-      modelName: 'LG HG2 18650',
-      chemistryType: 'Li-ion',
-      capacityMah: 3000,
-      nominalVoltageV: 3.6,
-      description: 'Аккумулятор с высокой токоотдачей, часто применяется в фонарях.',
-      imageKey: 'acc-lg-hg2.jpg',
-      videoKey: 'acc-lg-hg2.mp4',
-      status: AccumulatorStatus.PUBLISHED,
-      likedByEngineerIds: [4],
-    },
-    {
-      id: 3,
-      modelName: 'Panasonic NCR18650B',
-      chemistryType: 'Li-ion',
-      capacityMah: 3350,
-      nominalVoltageV: 3.6,
-      description: 'Один из самых ёмких 18650-элементов на рынке.',
-      imageKey: 'acc-panasonic-ncr18650b.jpg',
-      videoKey: 'acc-panasonic-ncr18650b.mp4',
-      status: AccumulatorStatus.PUBLISHED,
-      likedByEngineerIds: [1, 9],
-    },
-    {
-      id: 4,
-      modelName: 'Ni-MH AA Eneloop',
-      chemistryType: 'Ni-MH',
-      capacityMah: 1900,
-      nominalVoltageV: 1.2,
-      description: 'Пальчиковый аккумулятор с низким саморазрядом.',
-      imageKey: 'acc-nimh-eneloop.jpg',
-      videoKey: 'acc-nimh-eneloop.mp4',
-      status: AccumulatorStatus.PUBLISHED,
-      likedByEngineerIds: [2, 5, 8, 11],
-    },
-    {
-      id: 5,
-      modelName: 'Varta Industrial Ni-MH C 5000mAh',
-      chemistryType: 'Ni-MH',
-      capacityMah: 5000,
-      nominalVoltageV: 1.2,
-      description: 'Промышленный аккумулятор формата C повышенной ёмкости.',
-      imageKey: 'acc-varta-industrial-c.jpg',
-      videoKey: 'acc-varta-industrial-c.mp4',
-      status: AccumulatorStatus.PUBLISHED,
-      likedByEngineerIds: [6, 10],
-    },
-    {
-      id: 6,
-      modelName: 'Ace Power LiPo 3.7V 2200mAh',
-      chemistryType: 'Li-Po',
-      capacityMah: 2200,
-      nominalVoltageV: 3.7,
-      description: 'Плоский LiPo-аккумулятор для компактных устройств.',
-      imageKey: 'acc-ace-power-lipo-2200.jpg',
-      videoKey: 'acc-ace-power-lipo-2200.mp4',
-      status: AccumulatorStatus.PUBLISHED,
-      likedByEngineerIds: [1, 2, 3, 4, 13],
-    },
-    {
-      id: 7,
-      modelName: 'Sony VTC6 18650',
-      chemistryType: 'Li-ion',
-      capacityMah: 3000,
-      nominalVoltageV: 3.7,
-      description: 'Высокотоковый аккумулятор, популярен в электронных устройствах.',
-      imageKey: 'acc-sony-vtc6.jpg',
-      videoKey: 'acc-sony-vtc6.mp4',
-      status: AccumulatorStatus.PUBLISHED,
-      likedByEngineerIds: [9],
-    },
-    {
-      id: 8,
-      modelName: 'LiPo Pouch 3.7V 5000mAh',
-      chemistryType: 'Li-Po',
-      capacityMah: 5000,
-      nominalVoltageV: 3.7,
-      description: 'Аккумулятор-пауч для компактных устройств с высоким током разряда.',
-      imageKey: 'acc-lipo-5000.jpg',
-      videoKey: 'acc-lipo-5000.mp4',
+  constructor(
+    @InjectRepository(Accumulator)
+    private accumulatorRepository: Repository<Accumulator>,
+  ) {}
+
+  // ПЛИТКА — список через ORM, с фильтром и счётчиком лайков
+  async findPublished(minCapacityMah?: number): Promise<any[]> {
+    const qb = this.accumulatorRepository
+      .createQueryBuilder('a')
+      .where('a.status = :status', { status: AccumulatorStatus.PUBLISHED });
+
+    if (minCapacityMah) {
+      qb.andWhere('a.capacityMah >= :min', { min: minCapacityMah });
+    }
+
+    qb.addSelect((subQuery) => {
+      return subQuery
+        .select('COUNT(*)')
+        .from(Like, 'l')
+        .where('l.accumulator_id = a.id');
+    }, 'likesCount');
+
+    const { entities, raw } = await qb.orderBy('a.id', 'ASC').getRawAndEntities();
+
+    return entities.map((entity, index) => ({
+      ...entity,
+      likesCount: parseInt(raw[index]?.likesCount ?? '0', 10),
+    }));
+  }
+
+  // ДОБАВЛЕНИЕ — есть ли у пользователя черновик (ORM)
+  async findDraftByUser(userId: number): Promise<Accumulator | null> {
+    return this.accumulatorRepository.findOne({
+      where: { creator: { id: userId }, status: AccumulatorStatus.DRAFT },
+    });
+  }
+
+  // Кнопка "Далее" — создать/обновить черновик (ORM)
+  async createOrUpdateDraft(userId: number, modelName: string): Promise<Accumulator> {
+    const existing = await this.findDraftByUser(userId);
+    if (existing) {
+      existing.modelName = modelName;
+      return this.accumulatorRepository.save(existing);
+    }
+    const draft = this.accumulatorRepository.create({
+      modelName,
       status: AccumulatorStatus.DRAFT,
-      likedByEngineerIds: [],
-    },
-  ];
-
-  constructor(private readonly minioService: MinioService) {}
-
-  private toView(acc: Accumulator, currentMinCapacityMah?: number) {
-    return {
-      id: acc.id,
-      modelName: acc.modelName,
-      chemistryType: acc.chemistryType,
-      capacityMah: acc.capacityMah,
-      nominalVoltageV: acc.nominalVoltageV,
-      description: acc.description,
-      imageUrl: this.minioService.buildUrl(acc.imageKey),
-      videoUrl: this.minioService.buildUrl(acc.videoKey),
-      likesCount: acc.likedByEngineerIds.length,
-      currentMinCapacityMah: currentMinCapacityMah ?? '',
-    };
+      creator: { id: userId } as any,
+    });
+    return this.accumulatorRepository.save(draft);
   }
 
-  // GET /accumulators — страница "Плитка"
-  findPublished(minCapacityMah?: number) {
-    return this.accumulators
-      .filter((a) => a.status === AccumulatorStatus.PUBLISHED)
-      .filter((a) => (minCapacityMah ? a.capacityMah >= minCapacityMah : true))
-      .map((a) => this.toView(a, minCapacityMah));
+  // Кнопка "Опубликовать" — публикация черновика (ORM)
+  async publishDraft(
+    userId: number,
+    shortDescription: string,
+    capacityMah: number,
+    nominalVoltageV: number,
+  ): Promise<Accumulator | null> {
+    const draft = await this.findDraftByUser(userId);
+    if (!draft) return null;
+    draft.shortDescription = shortDescription;
+    draft.capacityMah = capacityMah;
+    draft.nominalVoltageV = nominalVoltageV;
+    draft.status = AccumulatorStatus.PUBLISHED;
+    draft.publishedAt = new Date();
+    return this.accumulatorRepository.save(draft);
   }
 
-  // GET /accumulators/draft — страница "Добавление"
-  findDraft() {
-    const draft = this.accumulators.find(
-      (a) => a.status === AccumulatorStatus.DRAFT,
+  /**
+   * ЛЕНТА — получаем СРАЗУ ОДНУ строку через курсор (raw SQL),
+   * без выборки всей таблицы и фильтрации в коде.
+   */
+  async getFeedItem(id?: number, next?: boolean): Promise<any | null> {
+    let targetId = id;
+
+    if (next && id) {
+      const nextRow = await this.accumulatorRepository.query(
+        `SELECT id FROM accumulators
+         WHERE status = 'published' AND id > $1
+         ORDER BY id ASC LIMIT 1`,
+        [id],
+      );
+      targetId = nextRow[0]?.id ?? id;
+    }
+
+    if (!targetId) {
+      const firstRow = await this.accumulatorRepository.query(
+        `SELECT id FROM accumulators WHERE status = 'published' ORDER BY id ASC LIMIT 1`,
+      );
+      targetId = firstRow[0]?.id;
+    }
+
+    if (!targetId) return null;
+
+    const rows = await this.accumulatorRepository.query(
+      `SELECT a.id, a.model_name AS "modelName", a.short_description AS "shortDescription",
+              a.image_url AS "imageUrl", a.video_url AS "videoUrl",
+              a.capacity_mah AS "capacityMah", a.nominal_voltage_v AS "nominalVoltageV",
+              (SELECT COUNT(*) FROM likes l WHERE l.accumulator_id = a.id) AS "likesCount"
+       FROM accumulators a
+       WHERE a.id = $1 AND a.status = 'published'`,
+      [targetId],
     );
-    return draft ? this.toView(draft) : null;
+    return rows[0] ?? null;
   }
 
-  // GET /accumulators/:id — страница "Лента"
-  findOnePublished(id: number) {
-    const acc = this.accumulators.find(
-      (a) => a.id === id && a.status === AccumulatorStatus.PUBLISHED,
+  // Логическое удаление — ТОЛЬКО raw SQL UPDATE, без ORM
+  async deleteAccumulator(id: number): Promise<void> {
+    await this.accumulatorRepository.query(
+      `UPDATE accumulators SET status = 'deleted' WHERE id = $1`,
+      [id],
     );
-    return acc ? this.toView(acc) : null;
-  }
-
-  // GET /accumulators/:id?next=true — следующий опубликованный после id
-  findNextAfter(id: number) {
-    const published = this.accumulators.filter(
-      (a) => a.status === AccumulatorStatus.PUBLISHED,
-    );
-    const currentIndex = published.findIndex((a) => a.id === id);
-    const nextIndex =
-      currentIndex === -1 ? 0 : (currentIndex + 1) % published.length;
-    return this.toView(published[nextIndex]);
   }
 }

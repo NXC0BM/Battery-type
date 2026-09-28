@@ -14,7 +14,6 @@
       <p class="subtitle">Каталог типов аккумуляторов</p>
     </div>
 
-    <!-- Без JavaScript: обычная GET-форма, значение сохраняется через value="" -->
     <form class="filter-section" method="GET" action="/03-plitka">
       <div class="filter-label">Ёмкость, мА·ч</div>
       <div class="filter-row">
@@ -35,28 +34,27 @@
 
     <div class="grid">
       {{#each accumulators}}
-        <a class="acc-card" href="/01-lenta/{{this.id}}">
-          <div class="acc-thumb" style="background-image: url('{{this.imageUrl}}')"></div>
-          <div class="acc-chem">{{this.chemistryType}}</div>
-          <div class="acc-name">{{this.modelName}}</div>
-          <div class="acc-meta">
-            <span class="capacity">{{this.capacityMah}} мА·ч</span>
-            <span>♥ {{this.likesCount}}</span>
-          </div>
-        </a>
+        <div class="acc-card-wrapper">
+          <a class="acc-card" href="/01-lenta/{{this.id}}">
+            <div class="acc-thumb" style="background-image: url('{{#if this.imageUrl}}{{this.imageUrl}}{{else}}/img/default-accumulator.jpg{{/if}}')"></div>
+            <div class="acc-name">{{this.modelName}}</div>
+            <div class="acc-meta">
+              <span class="capacity">{{this.capacityMah}} мА·ч</span>
+              <span>♥ {{this.likesCount}}</span>
+            </div>
+          </a>
+          <form action="/03-plitka/delete" method="POST" class="delete-form">
+            <input type="hidden" name="id" value="{{this.id}}">
+            <button type="submit" class="delete-btn">✕</button>
+          </form>
+        </div>
       {{/each}}
     </div>
 
     <nav class="tabbar">
-      <a href="/01-lenta">
-        <span class="icon">▶</span>Лента
-      </a>
-      <a href="/02-dobavlenie">
-        <span class="icon">+</span>Добавление
-      </a>
-      <a class="active" href="/03-plitka">
-        <span class="icon">▦</span>Плитка
-      </a>
+      <a href="/01-lenta"><span class="icon">▶</span>Лента</a>
+      <a href="/02-dobavlenie"><span class="icon">+</span>Добавление</a>
+      <a class="active" href="/03-plitka"><span class="icon">▦</span>Плитка</a>
     </nav>
   </div>
 </body>

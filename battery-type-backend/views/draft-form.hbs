@@ -11,45 +11,54 @@
       <div class="brand">AMPHOUR</div>
       <div class="brand-sub">Расчёт времени работы</div>
       <h1>Добавление <span class="draft-badge">Черновик</span></h1>
-      <p class="subtitle">Заполните параметры аккумулятора</p>
     </div>
 
-    {{#if draft}}
-      <div class="draft-media">
-        <div class="media-box">🖼<br />{{draft.modelName}}.jpg</div>
-        <div class="media-box">🎞<br />{{draft.modelName}}.mp4</div>
-      </div>
-
-      <div class="draft-field">
-        <label>Название модели</label>
-        <div class="value">{{draft.modelName}}</div>
-      </div>
-      <div class="draft-field">
-        <label>Тип химического состава</label>
-        <div class="value">{{draft.chemistryType}}</div>
-      </div>
-      <div class="draft-field">
-        <label>Ёмкость, мА·ч</label>
-        <div class="value">{{draft.capacityMah}}</div>
-      </div>
-      <div class="draft-field">
-        <label>Напряжение, В</label>
-        <div class="value">{{draft.nominalVoltageV}}</div>
-      </div>
+    {{#unless draft}}
+      <p style="padding: 0 16px; color: #767676;">Укажите название, фото и видео.</p>
+      <form method="POST" action="/02-dobavlenie/next">
+        <div class="draft-field">
+          <label>Название модели</label>
+          <input type="text" name="modelName" required style="width:100%;border:none;font-size:15px;">
+        </div>
+        <div class="draft-field">
+          <label>Фото</label>
+          <input type="file" disabled>
+          <div style="font-size:11px;color:#aaa;">(в этой лабораторной не сохраняется)</div>
+        </div>
+        <div class="draft-field">
+          <label>Видео</label>
+          <input type="file" disabled>
+          <div style="font-size:11px;color:#aaa;">(в этой лабораторной не сохраняется)</div>
+        </div>
+        <div style="padding: 0 16px;">
+          <button class="filter-submit" type="submit">Далее</button>
+        </div>
+      </form>
     {{else}}
-      <p style="padding: 0 16px; color: #767676;">Черновик не найден в коллекции.</p>
-    {{/if}}
+      <p style="padding: 0 16px; color: #767676;">{{draft.modelName}}</p>
+      <form method="POST" action="/02-dobavlenie/publish">
+        <div class="draft-field">
+          <label>Краткое описание</label>
+          <input type="text" name="shortDescription" required style="width:100%;border:none;font-size:15px;">
+        </div>
+        <div class="draft-field">
+          <label>Ёмкость, мА·ч</label>
+          <input type="number" name="capacityMah" required style="width:100%;border:none;font-size:15px;">
+        </div>
+        <div class="draft-field">
+          <label>Напряжение, В</label>
+          <input type="number" step="0.1" name="nominalVoltageV" required style="width:100%;border:none;font-size:15px;">
+        </div>
+        <div style="padding: 0 16px;">
+          <button class="filter-submit" type="submit">Опубликовать</button>
+        </div>
+      </form>
+    {{/unless}}
 
     <nav class="tabbar">
-      <a href="/01-lenta">
-        <span class="icon">▶</span>Лента
-      </a>
-      <a class="active" href="/02-dobavlenie">
-        <span class="icon">+</span>Добавление
-      </a>
-      <a href="/03-plitka">
-        <span class="icon">▦</span>Плитка
-      </a>
+      <a href="/01-lenta"><span class="icon">▶</span>Лента</a>
+      <a class="active" href="/02-dobavlenie"><span class="icon">+</span>Добавление</a>
+      <a href="/03-plitka"><span class="icon">▦</span>Плитка</a>
     </nav>
   </div>
 </body>
