@@ -2,83 +2,94 @@ import {
   Controller,
   Get,
   Post,
+  Put,
+  Delete,
   Param,
-  Render,
   Query,
   Body,
   ParseIntPipe,
-  Redirect,
+  HttpCode,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { AccumulatorsService } from './accumulators.service';
+import { PublishAccumulatorDto } from './dto/publish-accumulator.dto';
+import { LikeAccumulatorDto } from './dto/like-accumulator.dto';
 
-const CURRENT_USER_ID = 1; // без авторизации — фиксированный пользователь
-
-@Controller()
+@Controller('accumulators')
 export class AccumulatorsController {
   constructor(private readonly accumulatorsService: AccumulatorsService) {}
 
-  // GET — Плитка (ORM)
-  @Get('03-plitka')
-  @Render('grid')
-  async getGrid(@Query('minCapacityMah') minCapacityMah?: string) {
+  // GET список (только опубликованные), фильтр по ёмкости
+  @Get()
+  async getList(@Query('minCapacityMah') minCapacityMah?: string) {
     const min = minCapacityMah ? parseInt(minCapacityMah, 10) : undefined;
-    const accumulators = await this.accumulatorsService.findPublished(min);
-    return { accumulators, currentMinCapacityMah: min };
+    return this.accumulatorsService.findPublished(min);
   }
 
-  // GET — Добавление (ORM, есть ли черновик)
-  @Get('02-dobavlenie')
-  @Render('draft-form')
-  async getDraftForm() {
-    const draft = await this.accumulatorsService.findDraftByUser(CURRENT_USER_ID);
-    return { draft };
+  // GET лента (без ид — первая; с ид и next=true — следующая)
+  @Get('feed')
+  async getFeed(@Query('id') id?: string, @Query('next') next?: string) {
+    const parsedId = id ? parseInt(id, 10) : undefined;
+    return this.accumulatorsService.getFeedItem(parsedId, next === 'true');
   }
 
-  // GET — Лента (курсор, 1 строка)
-  @Get('01-lenta/:id')
-  @Render('feed')
-  async getFeedById(
-    @Param('id', ParseIntPipe) id: number,
-    @Query('next') next?: string,
+  // GET черновик текущего пользователя
+  @Get('draft')
+  async getDraft() {
+    return this.accumulatorsService.getDraft();
+  }
+
+  // POST добавление + файлы (multipart/form-data)
+  @Post()
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'image', maxCount: 1 },
+      { name: 'video', maxCount: 1 },
+    ]),
+  )
+  @HttpCode(201)
+  async create(
+    @Body('modelName') modelName: string,
+    @UploadedFiles()
+    files: { image?: Express.Multer.File[]; video?: Express.Multer.File[] },
   ) {
-    const accumulator = await this.accumulatorsService.getFeedItem(id, next === 'true');
-    return { accumulator };
-  }
-
-  @Get('01-lenta')
-  @Render('feed')
-  async getFeed() {
-    const accumulator = await this.accumulatorsService.getFeedItem();
-    return { accumulator };
-  }
-
-  // POST — кнопка "Далее" (ORM, создание/обновление черновика)
-  @Post('02-dobavlenie/next')
-  @Redirect('/02-dobavlenie', 302)
-  async createDraft(@Body('modelName') modelName: string) {
-    await this.accumulatorsService.createOrUpdateDraft(CURRENT_USER_ID, modelName);
-  }
-
-  // POST — кнопка "Опубликовать" (ORM)
-  @Post('02-dobavlenie/publish')
-  @Redirect('/03-plitka', 302)
-  async publishDraft(
-    @Body('shortDescription') shortDescription: string,
-    @Body('capacityMah') capacityMah: string,
-    @Body('nominalVoltageV') nominalVoltageV: string,
-  ) {
-    await this.accumulatorsService.publishDraft(
-      CURRENT_USER_ID,
-      shortDescription,
-      parseInt(capacityMah, 10),
-      parseFloat(nominalVoltageV),
+    return this.accumulatorsService.createDraft(
+      modelName,
+      files?.image?.[0],
+      files?.video?.[0],
     );
   }
 
-  // POST — логическое удаление (raw SQL UPDATE, без ORM)
-  @Post('03-plitka/delete')
-  @Redirect('/03-plitka', 302)
-  async deleteAccumulator(@Body('id') id: string) {
-    await this.accumulatorsService.deleteAccumulator(parseInt(id, 10));
+  // PUT публикация
+  @Put(':id/publish')
+  async publish(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: PublishAccumulatorDto,
+  ) {
+    return this.accumulatorsService.publish(
+      id,
+      dto.shortDescription,
+      dto.capacityMah,
+      dto.nominalVoltageV,
+    );
+  }
+
+  // DELETE — soft delete, только свои
+  @Delete(':id')
+  @HttpCode(204)
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.accumulatorsService.remove(id);
+  }
+
+  @Post(':id/like')
+  @HttpCode(200)
+  async like(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: LikeAccumulatorDto,
+  ) {
+    await this.accumulatorsService.setLike(id, dto.like);
+    return this.accumulatorsService.getFeedItem(id);
   }
 }

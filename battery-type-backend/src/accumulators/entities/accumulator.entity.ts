@@ -35,9 +35,16 @@ export class Accumulator {
   @Column({ name: 'published_at', type: 'timestamp', nullable: true })
   publishedAt: Date;
 
+  @Column({ name: 'completed_at', type: 'timestamp', nullable: true })
+  completedAt: Date;
+
   @ManyToOne(() => User, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'creator_id' })
   creator: User;
+
+  @ManyToOne(() => User, { onDelete: 'RESTRICT', nullable: true })
+  @JoinColumn({ name: 'moderator_id' })
+  moderator: User;
 
   @OneToMany(() => Like, (like) => like.accumulator)
   likes: Like[];
