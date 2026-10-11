@@ -15,20 +15,18 @@
 
     {{#unless draft}}
       <p style="padding: 0 16px; color: #767676;">Укажите название, фото и видео.</p>
-      <form method="POST" action="/02-dobavlenie/next">
+      <form method="POST" action="/02-dobavlenie/next" enctype="multipart/form-data">
         <div class="draft-field">
           <label>Название модели</label>
           <input type="text" name="modelName" required style="width:100%;border:none;font-size:15px;">
         </div>
-        <div class="draft-field">
+                <div class="draft-field">
           <label>Фото</label>
-          <input type="file" disabled>
-          <div style="font-size:11px;color:#aaa;">(в этой лабораторной не сохраняется)</div>
+          <input type="file" name="photo" accept="image/*">
         </div>
         <div class="draft-field">
           <label>Видео</label>
-          <input type="file" disabled>
-          <div style="font-size:11px;color:#aaa;">(в этой лабораторной не сохраняется)</div>
+          <input type="file" name="video" accept="video/*">
         </div>
         <div style="padding: 0 16px;">
           <button class="filter-submit" type="submit">Далее</button>

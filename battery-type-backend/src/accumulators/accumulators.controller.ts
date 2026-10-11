@@ -8,7 +8,12 @@ import {
   Body,
   ParseIntPipe,
   Redirect,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 import { AccumulatorsService } from './accumulators.service';
 
 const CURRENT_USER_ID = 1; // без авторизации — фиксированный пользователь
@@ -52,11 +57,33 @@ export class AccumulatorsController {
     return { accumulator };
   }
 
-  // POST — кнопка "Далее" (ORM, создание/обновление черновика)
+    // POST — кнопка "Далее" (ORM, создание/обновление черновика + файлы)
   @Post('02-dobavlenie/next')
   @Redirect('/02-dobavlenie', 302)
-  async createDraft(@Body('modelName') modelName: string) {
-    await this.accumulatorsService.createOrUpdateDraft(CURRENT_USER_ID, modelName);
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        { name: 'photo', maxCount: 1 },
+        { name: 'video', maxCount: 1 },
+      ],
+      {
+        storage: diskStorage({
+          destination: './public/uploads',
+          filename: (req, file, cb) => {
+            const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
+            cb(null, unique + extname(file.originalname));
+          },
+        }),
+      },
+    ),
+  )
+  async createDraft(
+    @Body('modelName') modelName: string,
+    @UploadedFiles() files: { photo?: Express.Multer.File[]; video?: Express.Multer.File[] },
+  ) {
+    const imageUrl = files?.photo?.[0] ? `/uploads/${files.photo[0].filename}` : undefined;
+    const videoUrl = files?.video?.[0] ? `/uploads/${files.video[0].filename}` : undefined;
+    await this.accumulatorsService.createOrUpdateDraft(CURRENT_USER_ID, modelName, imageUrl, videoUrl);
   }
 
   // POST — кнопка "Опубликовать" (ORM)

@@ -44,16 +44,25 @@ export class AccumulatorsService {
     });
   }
 
-  // Кнопка "Далее" — создать/обновить черновик (ORM)
-  async createOrUpdateDraft(userId: number, modelName: string): Promise<Accumulator> {
+    // Кнопка "Далее" — создать/обновить черновик (ORM) + сохранить пути к файлам
+  async createOrUpdateDraft(
+    userId: number,
+    modelName: string,
+    imageUrl?: string,
+    videoUrl?: string,
+  ): Promise<Accumulator> {
     const existing = await this.findDraftByUser(userId);
     if (existing) {
       existing.modelName = modelName;
+      if (imageUrl) existing.imageUrl = imageUrl;
+      if (videoUrl) existing.videoUrl = videoUrl;
       return this.accumulatorRepository.save(existing);
     }
     const draft = this.accumulatorRepository.create({
       modelName,
       status: AccumulatorStatus.DRAFT,
+      imageUrl,
+      videoUrl,
       creator: { id: userId } as any,
     });
     return this.accumulatorRepository.save(draft);
