@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 import { User } from './user.entity';
 import { UserResponseDto } from './dto/user-response.dto';
-import { CurrentUserProvider } from '../common/current-user.provider';
 
 @Injectable()
 export class UsersService {
@@ -12,16 +12,14 @@ export class UsersService {
     private userRepository: Repository<User>,
   ) {}
 
-  async register(username: string): Promise<UserResponseDto> {
-    const user = this.userRepository.create({ username });
+  async register(username: string, password: string): Promise<UserResponseDto> {
+    const hashed = await bcrypt.hash(password, 10);
+    const user = this.userRepository.create({ username, password: hashed });
     const saved = await this.userRepository.save(user);
     return { id: saved.id, username: saved.username };
   }
 
-  // Заглушка для ЛР4 — возвращает singleton-пользователя
-  async login(): Promise<UserResponseDto> {
-    const userId = CurrentUserProvider.getInstance().getCurrentUserId();
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    return { id: user?.id ?? userId, username: user?.username ?? '' };
+  async findByUsername(username: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { username } });
   }
 }

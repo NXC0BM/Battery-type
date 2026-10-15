@@ -9,18 +9,6 @@ export class UsersController {
   @Post('register')
   @HttpCode(201)
   async register(@Body() dto: RegisterUserDto) {
-    return this.usersService.register(dto.username);
+    return this.usersService.register(dto.username, dto.password);
   }
-
-  // Заглушка — реализация в ЛР4
-  @Post('login')
-  @HttpCode(200)
-  async login() {
-    return this.usersService.login();
-  }
-
-  // Заглушка — реализация в ЛР4
-  @Post('logout')
-  @HttpCode(204)
-  async logout() {}
 }

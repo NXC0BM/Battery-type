@@ -1,11 +1,15 @@
-import { Injectable, BadRequestException, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Accumulator } from './entities/accumulator.entity';
 import { AccumulatorStatus } from './entities/accumulator-status.enum';
 import { Like } from '../likes/like.entity';
 import { MinioService } from '../minio/minio.service';
-import { CurrentUserProvider } from '../common/current-user.provider';
 import { AccumulatorResponseDto } from './dto/accumulator-response.dto';
 
 @Injectable()
@@ -18,11 +22,11 @@ export class AccumulatorsService {
     private minioService: MinioService,
   ) {}
 
-  private currentUserId(): number {
-    return CurrentUserProvider.getInstance().getCurrentUserId();
-  }
-
-  private toDto(entity: any, likesCount: number): AccumulatorResponseDto {
+  private toDto(
+    entity: any,
+    likesCount: number,
+    currentUserId?: number,
+  ): AccumulatorResponseDto {
     return {
       id: entity.id,
       modelName: entity.modelName,
@@ -30,16 +34,20 @@ export class AccumulatorsService {
       imageUrl: this.minioService.buildUrl(entity.imageUrl),
       videoUrl: this.minioService.buildUrl(entity.videoUrl),
       capacityMah: entity.capacityMah ?? null,
-      nominalVoltageV: entity.nominalVoltageV !== null && entity.nominalVoltageV !== undefined
-        ? Number(entity.nominalVoltageV)
-        : null,
+      nominalVoltageV:
+        entity.nominalVoltageV !== null && entity.nominalVoltageV !== undefined
+          ? Number(entity.nominalVoltageV)
+          : null,
       likesCount,
-      isMine: entity.creator?.id === this.currentUserId() ? 1 : 0,
+      isMine: currentUserId && entity.creator?.id === currentUserId ? 1 : 0,
     };
   }
 
-  // GET список (только опубликованные), с фильтром по ёмкости + isMine
-  async findPublished(minCapacityMah?: number): Promise<AccumulatorResponseDto[]> {
+  // GET список
+  async findPublished(
+    minCapacityMah?: number,
+    currentUserId?: number,
+  ): Promise<AccumulatorResponseDto[]> {
     const qb = this.accumulatorRepository
       .createQueryBuilder('a')
       .leftJoinAndSelect('a.creator', 'creator')
@@ -49,20 +57,25 @@ export class AccumulatorsService {
       qb.andWhere('a.capacityMah >= :min', { min: minCapacityMah });
     }
 
-    qb.addSelect((sub) =>
-      sub.select('COUNT(*)').from(Like, 'l').where('l.accumulator_id = a.id'),
+    qb.addSelect(
+      (sub) =>
+        sub.select('COUNT(*)').from(Like, 'l').where('l.accumulator_id = a.id'),
       'likesCount',
     );
 
     const { entities, raw } = await qb.orderBy('a.id', 'ASC').getRawAndEntities();
 
     return entities.map((entity, i) =>
-      this.toDto(entity, parseInt(raw[i]?.likesCount ?? '0', 10)),
+      this.toDto(entity, parseInt(raw[i]?.likesCount ?? '0', 10), currentUserId),
     );
   }
 
-  // GET лента — 1 строка через курсор (raw SQL)
-  async getFeedItem(id?: number, next?: boolean): Promise<AccumulatorResponseDto | null> {
+  // GET лента
+  async getFeedItem(
+    id?: number,
+    next?: boolean,
+    currentUserId?: number,
+  ): Promise<AccumulatorResponseDto | null> {
     let targetId = id;
 
     if (next && id) {
@@ -104,28 +117,27 @@ export class AccumulatorsService {
       capacityMah: row.capacityMah ?? null,
       nominalVoltageV: row.nominalVoltageV !== null ? Number(row.nominalVoltageV) : null,
       likesCount: parseInt(row.likesCount ?? '0', 10),
-      isMine: row.creatorId === this.currentUserId() ? 1 : 0,
+      isMine: currentUserId && row.creatorId === currentUserId ? 1 : 0,
     };
   }
 
-  // GET черновик текущего пользователя (не более 1)
-  async getDraft(): Promise<AccumulatorResponseDto | null> {
+  // GET черновик текущего пользователя
+  async getDraft(userId: number): Promise<AccumulatorResponseDto | null> {
     const draft = await this.accumulatorRepository.findOne({
-      where: { creator: { id: this.currentUserId() }, status: AccumulatorStatus.DRAFT },
+      where: { creator: { id: userId }, status: AccumulatorStatus.DRAFT },
       relations: { creator: true },
     });
     if (!draft) return null;
-    return this.toDto(draft, 0);
+    return this.toDto(draft, 0, userId);
   }
 
   // POST добавление + файлы
   async createDraft(
     modelName: string,
+    userId: number,
     imageFile?: Express.Multer.File,
     videoFile?: Express.Multer.File,
   ): Promise<AccumulatorResponseDto> {
-    const userId = this.currentUserId();
-
     const existing = await this.accumulatorRepository.findOne({
       where: { creator: { id: userId }, status: AccumulatorStatus.DRAFT },
     });
@@ -150,17 +162,17 @@ export class AccumulatorsService {
       creator: { id: userId } as any,
     });
     const saved = await this.accumulatorRepository.save(draft);
-    return this.toDto({ ...saved, creator: { id: userId } }, 0);
+    return this.toDto({ ...saved, creator: { id: userId } }, 0, userId);
   }
 
   // PUT публикация (только свой черновик -> published)
   async publish(
     id: number,
+    userId: number,
     shortDescription: string,
     capacityMah: number,
     nominalVoltageV: number,
   ): Promise<AccumulatorResponseDto> {
-    const userId = this.currentUserId();
     const draft = await this.accumulatorRepository.findOne({
       where: { id },
       relations: { creator: true },
@@ -178,12 +190,11 @@ export class AccumulatorsService {
     draft.moderator = { id: userId } as any;
 
     const saved = await this.accumulatorRepository.save(draft);
-    return this.toDto(saved, 0);
+    return this.toDto(saved, 0, userId);
   }
 
   // DELETE — только свои, soft delete через raw SQL UPDATE
-  async remove(id: number): Promise<void> {
-    const userId = this.currentUserId();
+  async remove(id: number, userId: number): Promise<void> {
     const accumulator = await this.accumulatorRepository.findOne({
       where: { id },
       relations: { creator: true },
@@ -203,9 +214,7 @@ export class AccumulatorsService {
   }
 
   // POST like — 0/1
-  async setLike(accumulatorId: number, like: number): Promise<void> {
-    const userId = this.currentUserId();
-
+  async setLike(accumulatorId: number, userId: number, like: number): Promise<void> {
     const existing = await this.likeRepository.findOne({
       where: { user: { id: userId }, accumulator: { id: accumulatorId } },
     });
