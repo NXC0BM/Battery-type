@@ -1,0 +1,21 @@
+/* Стиль как в ЛР1 (dns-shop.ru): акцент #FC8507, фон #f7f7f7, текст #333333, шрифт PT Sans */
+@import url("https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap");
+
+body {
+    margin: 0;
+    background: #eeeeee;
+    color: #333333;
+    font-family: "PT Sans", Helvetica, Arial, sans-serif;
+}
+
+.appShell {
+    max-width: 420px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: #f7f7f7;
+    box-shadow: 0 0 24px rgba(0, 0, 0, 0.12);
+}
+
+.appContent {
+    padding-bottom: 60px; /* место под таб-панель */
+}

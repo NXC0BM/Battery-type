@@ -1,0 +1,47 @@
+.appHeader {
+    padding: 16px 16px 4px;
+}
+
+.appHeader .brand {
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+}
+
+.appHeader .brandSub {
+    font-size: 11px;
+    color: #fc8507;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.appHeader h1 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 12px 0 2px;
+}
+
+.appHeader .subtitle {
+    color: #767676;
+    font-size: 13px;
+    margin: 0 0 8px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 0 16px 16px;
+}
+
+.gridLoader {
+    display: flex;
+    justify-content: center;
+    padding: 32px 0;
+    color: #fc8507;
+}
+
+.gridEmpty {
+    padding: 16px;
+    color: #767676;
+}
