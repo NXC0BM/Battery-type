@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { User } from '../users/user.entity';
-import { Accumulator } from '../accumulators/entities/accumulator.entity';
+import { BatteryType } from '../battery_type/entities/battery-type.entity';
 
 @Entity('likes')
 export class Like {
@@ -11,6 +11,6 @@ export class Like {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToOne(() => Accumulator, (accumulator) => accumulator.likes, { onDelete: 'RESTRICT' })  @JoinColumn({ name: 'accumulator_id' })
-  accumulator: Accumulator;
+  @ManyToOne(() => BatteryType, (batteryType) => batteryType.likes, { onDelete: 'RESTRICT' })  @JoinColumn({ name: 'battery_type_id' })
+  batteryType: BatteryType;
 }

@@ -6,17 +6,17 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Accumulator } from './entities/accumulator.entity';
-import { AccumulatorStatus } from './entities/accumulator-status.enum';
+import { BatteryType } from './entities/battery-type.entity';
+import { BatteryTypeStatus } from './entities/battery-type-status.enum';
 import { Like } from '../likes/like.entity';
 import { MinioService } from '../minio/minio.service';
-import { AccumulatorResponseDto } from './dto/accumulator-response.dto';
+import { BatteryTypeResponseDto } from './dto/battery-type-response.dto';
 
 @Injectable()
-export class AccumulatorsService {
+export class BatteryTypeService {
   constructor(
-    @InjectRepository(Accumulator)
-    private accumulatorRepository: Repository<Accumulator>,
+    @InjectRepository(BatteryType)
+    private batteryTypeRepository: Repository<BatteryType>,
     @InjectRepository(Like)
     private likeRepository: Repository<Like>,
     private minioService: MinioService,
@@ -26,7 +26,7 @@ export class AccumulatorsService {
     entity: any,
     likesCount: number,
     currentUserId?: number,
-  ): AccumulatorResponseDto {
+  ): BatteryTypeResponseDto {
     return {
       id: entity.id,
       modelName: entity.modelName,
@@ -47,11 +47,11 @@ export class AccumulatorsService {
   async findPublished(
     minCapacityMah?: number,
     currentUserId?: number,
-  ): Promise<AccumulatorResponseDto[]> {
-    const qb = this.accumulatorRepository
+  ): Promise<BatteryTypeResponseDto[]> {
+    const qb = this.batteryTypeRepository
       .createQueryBuilder('a')
       .leftJoinAndSelect('a.creator', 'creator')
-      .where('a.status = :status', { status: AccumulatorStatus.PUBLISHED });
+      .where('a.status = :status', { status: BatteryTypeStatus.PUBLISHED });
 
     if (minCapacityMah) {
       qb.andWhere('a.capacityMah >= :min', { min: minCapacityMah });
@@ -59,7 +59,7 @@ export class AccumulatorsService {
 
     qb.addSelect(
       (sub) =>
-        sub.select('COUNT(*)').from(Like, 'l').where('l.accumulator_id = a.id'),
+        sub.select('COUNT(*)').from(Like, 'l').where('l.battery_type_id = a.id'),
       'likesCount',
     );
 
@@ -75,33 +75,33 @@ export class AccumulatorsService {
     id?: number,
     next?: boolean,
     currentUserId?: number,
-  ): Promise<AccumulatorResponseDto | null> {
+  ): Promise<BatteryTypeResponseDto | null> {
     let targetId = id;
 
     if (next && id) {
-      const nextRow = await this.accumulatorRepository.query(
-        `SELECT id FROM accumulators WHERE status = 'published' AND id > $1 ORDER BY id ASC LIMIT 1`,
+      const nextRow = await this.batteryTypeRepository.query(
+        `SELECT id FROM battery_type WHERE status = 'published' AND id > $1 ORDER BY id ASC LIMIT 1`,
         [id],
       );
       targetId = nextRow[0]?.id ?? id;
     }
 
     if (!targetId) {
-      const firstRow = await this.accumulatorRepository.query(
-        `SELECT id FROM accumulators WHERE status = 'published' ORDER BY id ASC LIMIT 1`,
+      const firstRow = await this.batteryTypeRepository.query(
+        `SELECT id FROM battery_type WHERE status = 'published' ORDER BY id ASC LIMIT 1`,
       );
       targetId = firstRow[0]?.id;
     }
 
     if (!targetId) return null;
 
-    const rows = await this.accumulatorRepository.query(
+    const rows = await this.batteryTypeRepository.query(
       `SELECT a.id, a.model_name AS "modelName", a.short_description AS "shortDescription",
               a.image_url AS "imageUrl", a.video_url AS "videoUrl",
               a.capacity_mah AS "capacityMah", a.nominal_voltage_v AS "nominalVoltageV",
               a.creator_id AS "creatorId",
-              (SELECT COUNT(*) FROM likes l WHERE l.accumulator_id = a.id) AS "likesCount"
-       FROM accumulators a
+              (SELECT COUNT(*) FROM likes l WHERE l.battery_type_id = a.id) AS "likesCount"
+       FROM battery_type a
        WHERE a.id = $1 AND a.status = 'published'`,
       [targetId],
     );
@@ -122,9 +122,9 @@ export class AccumulatorsService {
   }
 
   // GET черновик текущего пользователя
-  async getDraft(userId: number): Promise<AccumulatorResponseDto | null> {
-    const draft = await this.accumulatorRepository.findOne({
-      where: { creator: { id: userId }, status: AccumulatorStatus.DRAFT },
+  async getDraft(userId: number): Promise<BatteryTypeResponseDto | null> {
+    const draft = await this.batteryTypeRepository.findOne({
+      where: { creator: { id: userId }, status: BatteryTypeStatus.DRAFT },
       relations: { creator: true },
     });
     if (!draft) return null;
@@ -137,9 +137,9 @@ export class AccumulatorsService {
     userId: number,
     imageFile?: Express.Multer.File,
     videoFile?: Express.Multer.File,
-  ): Promise<AccumulatorResponseDto> {
-    const existing = await this.accumulatorRepository.findOne({
-      where: { creator: { id: userId }, status: AccumulatorStatus.DRAFT },
+  ): Promise<BatteryTypeResponseDto> {
+    const existing = await this.batteryTypeRepository.findOne({
+      where: { creator: { id: userId }, status: BatteryTypeStatus.DRAFT },
     });
     if (existing) {
       throw new BadRequestException();
@@ -154,14 +154,14 @@ export class AccumulatorsService {
       videoKey = await this.minioService.uploadFile(videoFile.buffer, videoFile.originalname, 'vid');
     }
 
-    const draft = this.accumulatorRepository.create({
+    const draft = this.batteryTypeRepository.create({
       modelName,
-      status: AccumulatorStatus.DRAFT,
+      status: BatteryTypeStatus.DRAFT,
       imageUrl: imageKey,
       videoUrl: videoKey,
       creator: { id: userId } as any,
     });
-    const saved = await this.accumulatorRepository.save(draft);
+    const saved = await this.batteryTypeRepository.save(draft);
     return this.toDto({ ...saved, creator: { id: userId } }, 0, userId);
   }
 
@@ -172,57 +172,57 @@ export class AccumulatorsService {
     shortDescription: string,
     capacityMah: number,
     nominalVoltageV: number,
-  ): Promise<AccumulatorResponseDto> {
-    const draft = await this.accumulatorRepository.findOne({
+  ): Promise<BatteryTypeResponseDto> {
+    const draft = await this.batteryTypeRepository.findOne({
       where: { id },
       relations: { creator: true },
     });
 
     if (!draft) throw new NotFoundException();
     if (draft.creator.id !== userId) throw new ForbiddenException();
-    if (draft.status !== AccumulatorStatus.DRAFT) throw new BadRequestException();
+    if (draft.status !== BatteryTypeStatus.DRAFT) throw new BadRequestException();
 
     draft.shortDescription = shortDescription;
     draft.capacityMah = capacityMah;
     draft.nominalVoltageV = nominalVoltageV;
-    draft.status = AccumulatorStatus.PUBLISHED;
+    draft.status = BatteryTypeStatus.PUBLISHED;
     draft.publishedAt = new Date();
     draft.moderator = { id: userId } as any;
 
-    const saved = await this.accumulatorRepository.save(draft);
+    const saved = await this.batteryTypeRepository.save(draft);
     return this.toDto(saved, 0, userId);
   }
 
   // DELETE — только свои, soft delete через raw SQL UPDATE
   async remove(id: number, userId: number): Promise<void> {
-    const accumulator = await this.accumulatorRepository.findOne({
+    const batteryType = await this.batteryTypeRepository.findOne({
       where: { id },
       relations: { creator: true },
     });
 
-    if (!accumulator || accumulator.status === AccumulatorStatus.DELETED) {
+    if (!batteryType || batteryType.status === BatteryTypeStatus.DELETED) {
       throw new NotFoundException();
     }
-    if (accumulator.creator.id !== userId) {
+    if (batteryType.creator.id !== userId) {
       throw new ForbiddenException();
     }
 
-    await this.accumulatorRepository.query(
-      `UPDATE accumulators SET status = 'deleted', completed_at = now() WHERE id = $1`,
+    await this.batteryTypeRepository.query(
+      `UPDATE battery_type SET status = 'deleted', completed_at = now() WHERE id = $1`,
       [id],
     );
   }
 
   // POST like — 0/1
-  async setLike(accumulatorId: number, userId: number, like: number): Promise<void> {
+  async setLike(batteryTypeId: number, userId: number, like: number): Promise<void> {
     const existing = await this.likeRepository.findOne({
-      where: { user: { id: userId }, accumulator: { id: accumulatorId } },
+      where: { user: { id: userId }, batteryType: { id: batteryTypeId } },
     });
 
     if (like === 1 && !existing) {
       const newLike = this.likeRepository.create({
         user: { id: userId } as any,
-        accumulator: { id: accumulatorId } as any,
+        batteryType: { id: batteryTypeId } as any,
       });
       await this.likeRepository.save(newLike);
     } else if (like === 0 && existing) {

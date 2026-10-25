@@ -1,17 +1,17 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { User } from '../../users/user.entity';
-import { AccumulatorStatus } from './accumulator-status.enum';
+import { BatteryTypeStatus } from './battery-type-status.enum';
 import { Like } from '../../likes/like.entity';
-@Entity('accumulators')
-export class Accumulator {
+@Entity('battery_type')
+export class BatteryType {
   @PrimaryGeneratedColumn()
   id: number;
   @Column({ name: 'model_name', type: 'varchar', length: 100 })
   modelName: string;
   @Column({ name: 'short_description', type: 'varchar', length: 255, nullable: true })
   shortDescription: string;
-  @Column({ type: 'varchar', length: 20, default: AccumulatorStatus.DRAFT })
-  status: AccumulatorStatus;
+  @Column({ type: 'varchar', length: 20, default: BatteryTypeStatus.DRAFT })
+  status: BatteryTypeStatus;
   @Column({ name: 'image_url', type: 'varchar', length: 255, nullable: true })
   imageUrl: string;
   @Column({ name: 'video_url', type: 'varchar', length: 255, nullable: true })
@@ -33,6 +33,6 @@ export class Accumulator {
   @ManyToOne(() => User, { onDelete: 'RESTRICT', nullable: true })
   @JoinColumn({ name: 'moderator_id' })
   moderator: User;
-  @OneToMany(() => Like, (like) => like.accumulator)
+  @OneToMany(() => Like, (like) => like.batteryType)
   likes: Like[];
 }

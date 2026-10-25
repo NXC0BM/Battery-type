@@ -16,15 +16,15 @@ import {
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiCookieAuth } from '@nestjs/swagger';
-import { AccumulatorsService } from './accumulators.service';
-import { PublishAccumulatorDto } from './dto/publish-accumulator.dto';
-import { LikeAccumulatorDto } from './dto/like-accumulator.dto';
+import { BatteryTypeService } from './battery_type.service';
+import { PublishBatteryTypeDto } from './dto/publish-battery-type.dto';
+import { LikeBatteryTypeDto } from './dto/like-battery-type.dto';
 import { SessionAuthGuard } from '../common/session-auth.guard';
 
-@ApiTags('accumulators')
-@Controller('accumulators')
-export class AccumulatorsController {
-  constructor(private readonly accumulatorsService: AccumulatorsService) {}
+@ApiTags('battery_type')
+@Controller('battery_type')
+export class BatteryTypeController {
+  constructor(private readonly batteryTypeService: BatteryTypeService) {}
 
   // GET список — доступно гостям, isMine считается если есть сессия
   @Get()
@@ -34,7 +34,7 @@ export class AccumulatorsController {
     @Req() req?: any,
   ) {
     const min = minCapacityMah ? parseInt(minCapacityMah, 10) : undefined;
-    return this.accumulatorsService.findPublished(min, req?.session?.userId);
+    return this.batteryTypeService.findPublished(min, req?.session?.userId);
   }
 
   // GET лента — доступно гостям
@@ -46,7 +46,7 @@ export class AccumulatorsController {
     @Req() req?: any,
   ) {
     const parsedId = id ? parseInt(id, 10) : undefined;
-    return this.accumulatorsService.getFeedItem(
+    return this.batteryTypeService.getFeedItem(
       parsedId,
       next === 'true',
       req?.session?.userId,
@@ -59,7 +59,7 @@ export class AccumulatorsController {
   @ApiCookieAuth('connect.sid')
   @ApiOperation({ summary: 'Черновик текущего пользователя' })
   async getDraft(@Req() req: any) {
-    return this.accumulatorsService.getDraft(req.session.userId);
+    return this.batteryTypeService.getDraft(req.session.userId);
   }
 
   // POST добавление — требует авторизации
@@ -80,7 +80,7 @@ export class AccumulatorsController {
     files: { image?: Express.Multer.File[]; video?: Express.Multer.File[] },
     @Req() req: any,
   ) {
-    return this.accumulatorsService.createDraft(
+    return this.batteryTypeService.createDraft(
       modelName,
       req.session.userId,
       files?.image?.[0],
@@ -95,10 +95,10 @@ export class AccumulatorsController {
   @ApiOperation({ summary: 'Опубликовать черновик' })
   async publish(
     @Param('id', ParseIntPipe) id: number,
-    @Body() dto: PublishAccumulatorDto,
+    @Body() dto: PublishBatteryTypeDto,
     @Req() req: any,
   ) {
-    return this.accumulatorsService.publish(
+    return this.batteryTypeService.publish(
       id,
       req.session.userId,
       dto.shortDescription,
@@ -114,7 +114,7 @@ export class AccumulatorsController {
   @ApiOperation({ summary: 'Удалить карточку (своя)' })
   @HttpCode(204)
   async remove(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
-    await this.accumulatorsService.remove(id, req.session.userId);
+    await this.batteryTypeService.remove(id, req.session.userId);
   }
 
   // POST лайк — требует авторизации
@@ -125,10 +125,10 @@ export class AccumulatorsController {
   @HttpCode(200)
   async like(
     @Param('id', ParseIntPipe) id: number,
-    @Body() dto: LikeAccumulatorDto,
+    @Body() dto: LikeBatteryTypeDto,
     @Req() req: any,
   ) {
-    await this.accumulatorsService.setLike(id, req.session.userId, dto.like);
-    return this.accumulatorsService.getFeedItem(id, false, req.session.userId);
+    await this.batteryTypeService.setLike(id, req.session.userId, dto.like);
+    return this.batteryTypeService.getFeedItem(id, false, req.session.userId);
   }
 }

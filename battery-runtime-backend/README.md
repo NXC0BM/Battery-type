@@ -4,7 +4,7 @@ REST API сервис для учёта аккумуляторов: карточ
 
 ## Таблицы базы данных
 
-### accumulators
+### battery_type
 
 | Колонка | Тип | Описание |
 |---|---|---|
@@ -33,13 +33,13 @@ REST API сервис для учёта аккумуляторов: карточ
 |---|---|---|
 | id | serial, PK | идентификатор |
 | user_id | FK → users.id | кто поставил лайк |
-| accumulator_id | FK → accumulators.id | какой карточке |
+| battery_type_id | FK → battery_type.id | какой карточке |
 
-Уникальность пары (user_id, accumulator_id) не даёт одному пользователю лайкнуть карточку дважды.
+Уникальность пары (user_id, battery_type_id) не даёт одному пользователю лайкнуть карточку дважды.
 
 ## Методы сервисов
 
-### AccumulatorsService
+### BatteryTypeService
 
 | Метод | Через что | Описание |
 |---|---|---|
@@ -49,7 +49,7 @@ REST API сервис для учёта аккумуляторов: карточ
 | `createDraft(modelName, imageFile?, videoFile?)` | ORM + MinIO | создаёт черновик, загружает файлы в MinIO |
 | `publish(id, shortDescription, capacityMah, nominalVoltageV)` | ORM | переводит черновик в статус published |
 | `remove(id)` | raw SQL (курсор, UPDATE) | мягкое удаление — статус meняется на deleted; доступно только владельцу карточки |
-| `setLike(accumulatorId, like)` | ORM | ставит/снимает лайк, с проверкой текущего состояния |
+| `setLike(batteryTypeId, like)` | ORM | ставит/снимает лайк, с проверкой текущего состояния |
 
 ### UsersService
 
@@ -68,17 +68,17 @@ REST API сервис для учёта аккумуляторов: карточ
 | POST | `/api/users/login` | вход |
 | POST | `/api/users/logout` | выход |
 
-### Accumulators (`/api/accumulators`)
+### BatteryType (`/api/battery_type`)
 
 | Метод | Путь | Описание |
 |---|---|---|
-| GET | `/api/accumulators` | список опубликованных, фильтр `?minCapacityMah=` |
-| GET | `/api/accumulators/feed` | лента, параметры `?id=&next=true` |
-| GET | `/api/accumulators/draft` | черновик текущего пользователя |
-| POST | `/api/accumulators` | создать черновик (`form-data`: `modelName`, `image`, `video`) |
-| PUT | `/api/accumulators/:id/publish` | опубликовать черновик |
-| DELETE | `/api/accumulators/:id` | удалить (только своё) |
-| POST | `/api/accumulators/:id/like` | поставить/снять лайк (`{ "like": 0 \| 1 }`) |
+| GET | `/api/battery_type` | список опубликованных, фильтр `?minCapacityMah=` |
+| GET | `/api/battery_type/feed` | лента, параметры `?id=&next=true` |
+| GET | `/api/battery_type/draft` | черновик текущего пользователя |
+| POST | `/api/battery_type` | создать черновик (`form-data`: `modelName`, `image`, `video`) |
+| PUT | `/api/battery_type/:id/publish` | опубликовать черновик |
+| DELETE | `/api/battery_type/:id` | удалить (только своё) |
+| POST | `/api/battery_type/:id/like` | поставить/снять лайк (`{ "like": 0 \| 1 }`) |
 
 ## Хранение файлов
 

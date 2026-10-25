@@ -1,7 +1,7 @@
 import { IsString, IsNumber, Min, MinLength } from 'class-validator';
 import { Type } from 'class-transformer';
 
-export class PublishAccumulatorDto {
+export class PublishBatteryTypeDto {
   @IsString()
   @MinLength(1)
   shortDescription: string;

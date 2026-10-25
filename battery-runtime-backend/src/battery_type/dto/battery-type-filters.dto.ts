@@ -1,6 +1,6 @@
 import { IsOptional, IsNumberString } from 'class-validator';
 
-export class AccumulatorFiltersDto {
+export class BatteryTypeFiltersDto {
   @IsOptional()
   @IsNumberString()
   minCapacityMah?: string;

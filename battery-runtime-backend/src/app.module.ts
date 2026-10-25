@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AccumulatorsModule } from './accumulators/accumulators.module';
+import { BatteryTypeModule } from './battery_type/battery_type.module';
 import { UsersModule } from './users/users.module';
 import { LikesModule } from './likes/likes.module';
 import { AuthModule } from './auth/auth.module';
@@ -25,7 +25,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     UsersModule,
     LikesModule,
-    AccumulatorsModule,
+    BatteryTypeModule,
     AuthModule,
   ],
 })

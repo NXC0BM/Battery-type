@@ -1,4 +1,4 @@
-export class AccumulatorResponseDto {
+export class BatteryTypeResponseDto {
   id: number;
   modelName: string;
   shortDescription: string | null;
