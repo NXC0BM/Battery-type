@@ -1,7 +1,7 @@
 {
   "name": "battery-runtime-backend",
   "version": "0.1.0",
-  "description": "AMPHOUR — расчёт времени работы устройства от аккумулятора (Sprint 1)",
+  "description": "Battery Runtime — расчёт времени работы устройства от аккумулятора (Sprint 1)",
   "scripts": {
     "start": "nest start",
     "start:dev": "nest start --watch",

@@ -32,7 +32,7 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('AMPHOUR API')
+    .setTitle('Battery Runtime API')
     .setVersion('1.0')
     .addCookieAuth('connect.sid')
     .build();
@@ -40,6 +40,6 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document);
 
   await app.listen(3000);
-  console.log('AMPHOUR REST API запущен на порту 3000 (проверяй по IP из hostname -I)');
+  console.log('Battery Runtime REST API запущен на порту 3000 (проверяй по IP из hostname -I)');
 }
 bootstrap();
