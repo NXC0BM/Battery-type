@@ -83,3 +83,21 @@ REST API сервис для учёта аккумуляторов: карточ
 ## Хранение файлов
 
 Картинки и видео загружаются в MinIO (бакет `bucket1`). В БД хранится только имя файла (ключ), полный URL собирается сервисом `MinioService.buildUrl(key)` при формировании ответа API.
+
+## Активные сессии (Redis + Lua)
+
+Сессии хранятся в Redis (connect-redis, ключи `sess:<sid>`). Скрипт `scripts/redis/active_sessions.lua`
+обходит ключи через `SCAN`, разбирает JSON сессии и выводит только авторизованные сессии (`userId`) с TTL.
+
+```bash
+npm run sessions
+# или
+docker exec redis redis-cli EVAL "$(cat scripts/redis/active_sessions.lua)" 0
+```
+
+Пример вывода:
+
+```
+1) "active sessions: 1"
+2) "userId=5 | ttl=86400s | sess:abc..."
+```

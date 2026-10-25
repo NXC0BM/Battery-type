@@ -6,7 +6,8 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "build": "nest build",
-    "migrate": "ts-node -r dotenv/config scripts/migrate.ts"
+    "migrate": "ts-node -r dotenv/config scripts/migrate.ts",
+    "sessions": "docker exec redis redis-cli EVAL \"$(cat scripts/redis/active_sessions.lua)\" 0"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.0",
