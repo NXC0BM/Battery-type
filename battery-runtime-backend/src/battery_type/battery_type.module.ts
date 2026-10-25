@@ -4,10 +4,12 @@ import { BatteryTypeController } from './battery_type.controller';
 import { BatteryTypeService } from './battery_type.service';
 import { BatteryType } from './entities/battery-type.entity';
 import { Like } from '../likes/like.entity';
+import { Attribute } from '../attributes/attribute.entity';
+import { BatteryTypeAttribute } from '../attributes/battery-type-attribute.entity';
 import { MinioModule } from '../minio/minio.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([BatteryType, Like]), MinioModule],
+  imports: [TypeOrmModule.forFeature([BatteryType, Like, Attribute, BatteryTypeAttribute]), MinioModule],
   controllers: [BatteryTypeController],
   providers: [BatteryTypeService],
 })

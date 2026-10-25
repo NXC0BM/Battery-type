@@ -37,6 +37,27 @@ REST API сервис для учёта аккумуляторов: карточ
 
 Уникальность пары (user_id, battery_type_id) не даёт одному пользователю лайкнуть карточку дважды.
 
+### attributes (EAV — атрибуты)
+
+| Поле | Тип | Описание |
+|---|---|---|
+| id | serial PK | идентификатор атрибута |
+| name | varchar(100) unique | название характеристики («Химия», «Масса», …) |
+| unit | varchar(20) null | единица измерения |
+
+### battery_type_attributes (EAV — значения, М-М)
+
+| Поле | Тип | Описание |
+|---|---|---|
+| id | serial PK | идентификатор |
+| battery_type_id | int FK → battery_type.id | услуга |
+| attribute_id | int FK → attributes.id | атрибут |
+| value | varchar(255) | значение атрибута для услуги |
+
+Уникальность (battery_type_id, attribute_id). Миграция: `migrations/002_attributes_eav.sql`.
+Атрибуты передаются необязательным массивом `attributes: [{ name, value, unit? }]` в `PUT /api/battery_type/:id/publish`
+и возвращаются в карточке ленты (`GET /api/battery_type/feed`) — странице «подробнее об услуге».
+
 ## Методы сервисов
 
 ### BatteryTypeService

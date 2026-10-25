@@ -1,3 +1,5 @@
+import { AttributeValueDto } from './attribute-value.dto';
+
 export class BatteryTypeResponseDto {
   id: number;
   modelName: string;
@@ -8,4 +10,5 @@ export class BatteryTypeResponseDto {
   nominalVoltageV: number | null;
   likesCount: number;
   isMine: number; // 0/1
+  attributes?: AttributeValueDto[]; // доп. характеристики (EAV), заполняются на странице "подробнее"
 }

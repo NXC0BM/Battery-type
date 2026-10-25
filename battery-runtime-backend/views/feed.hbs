@@ -16,6 +16,13 @@
           <div class="feed-title">{{accumulator.modelName}}</div>
           <div class="feed-specs">{{accumulator.capacityMah}} мА·ч · {{accumulator.nominalVoltageV}} В</div>
           <div class="feed-desc">{{accumulator.shortDescription}}</div>
+          {{#if accumulator.attributes.length}}
+          <ul class="feed-attrs">
+            {{#each accumulator.attributes}}
+            <li><span class="attr-name">{{this.name}}</span><span class="attr-value">{{this.value}}{{#if this.unit}} {{this.unit}}{{/if}}</span></li>
+            {{/each}}
+          </ul>
+          {{/if}}
           <div class="feed-row">
             <div class="like-btn">
               <span class="heart">♥</span>

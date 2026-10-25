@@ -11,6 +11,7 @@ import { BatteryTypeStatus } from './entities/battery-type-status.enum';
 import { Like } from '../likes/like.entity';
 import { MinioService } from '../minio/minio.service';
 import { BatteryTypeResponseDto } from './dto/battery-type-response.dto';
+import { AttributeValueDto } from './dto/attribute-value.dto';
 
 @Injectable()
 export class BatteryTypeService {
@@ -118,7 +119,39 @@ export class BatteryTypeService {
       nominalVoltageV: row.nominalVoltageV !== null ? Number(row.nominalVoltageV) : null,
       likesCount: parseInt(row.likesCount ?? '0', 10),
       isMine: currentUserId && row.creatorId === currentUserId ? 1 : 0,
+      attributes: await this.getAttributes(row.id),
     };
+  }
+
+  // Доп. характеристики услуги (EAV): JOIN атрибутов и вертикальной таблицы значений
+  async getAttributes(batteryTypeId: number): Promise<AttributeValueDto[]> {
+    const rows = await this.batteryTypeRepository.query(
+      `SELECT at.name, bta.value, at.unit
+       FROM battery_type_attributes bta
+       JOIN attributes at ON at.id = bta.attribute_id
+       WHERE bta.battery_type_id = $1
+       ORDER BY at.name`,
+      [batteryTypeId],
+    );
+    return rows.map((r: any) => ({ name: r.name, value: r.value, unit: r.unit ?? undefined }));
+  }
+
+  // Сохранение доп. характеристик: атрибут ищется по имени (создаётся, если нет),
+  // значение вставляется/обновляется в battery_type_attributes
+  private async saveAttributes(batteryTypeId: number, attributes: AttributeValueDto[]): Promise<void> {
+    for (const a of attributes) {
+      const attr = await this.batteryTypeRepository.query(
+        `INSERT INTO attributes (name, unit) VALUES ($1, $2)
+         ON CONFLICT (name) DO UPDATE SET unit = COALESCE(EXCLUDED.unit, attributes.unit)
+         RETURNING id`,
+        [a.name, a.unit ?? null],
+      );
+      await this.batteryTypeRepository.query(
+        `INSERT INTO battery_type_attributes (battery_type_id, attribute_id, value) VALUES ($1, $2, $3)
+         ON CONFLICT (battery_type_id, attribute_id) DO UPDATE SET value = EXCLUDED.value`,
+        [batteryTypeId, attr[0].id, a.value],
+      );
+    }
   }
 
   // GET черновик текущего пользователя
@@ -172,6 +205,7 @@ export class BatteryTypeService {
     shortDescription: string,
     capacityMah: number,
     nominalVoltageV: number,
+    attributes?: AttributeValueDto[],
   ): Promise<BatteryTypeResponseDto> {
     const draft = await this.batteryTypeRepository.findOne({
       where: { id },
@@ -190,7 +224,10 @@ export class BatteryTypeService {
     draft.moderator = { id: userId } as any;
 
     const saved = await this.batteryTypeRepository.save(draft);
-    return this.toDto(saved, 0, userId);
+    if (attributes?.length) {
+      await this.saveAttributes(saved.id, attributes);
+    }
+    return { ...this.toDto(saved, 0, userId), attributes: await this.getAttributes(saved.id) };
   }
 
   // DELETE — только свои, soft delete через raw SQL UPDATE

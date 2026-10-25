@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColum
 import { User } from '../../users/user.entity';
 import { BatteryTypeStatus } from './battery-type-status.enum';
 import { Like } from '../../likes/like.entity';
+import { BatteryTypeAttribute } from '../../attributes/battery-type-attribute.entity';
 @Entity('battery_type')
 export class BatteryType {
   @PrimaryGeneratedColumn()
@@ -35,4 +36,6 @@ export class BatteryType {
   moderator: User;
   @OneToMany(() => Like, (like) => like.batteryType)
   likes: Like[];
+  @OneToMany(() => BatteryTypeAttribute, (bta) => bta.batteryType)
+  attributes: BatteryTypeAttribute[];
 }

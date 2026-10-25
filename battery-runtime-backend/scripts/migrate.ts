@@ -1,6 +1,8 @@
 import { DataSource } from 'typeorm';
 import { User } from '../src/users/user.entity';
-import { Accumulator } from '../src/accumulators/entities/accumulator.entity';
+import { BatteryType } from '../src/battery_type/entities/battery-type.entity';
+import { Attribute } from '../src/attributes/attribute.entity';
+import { BatteryTypeAttribute } from '../src/attributes/battery-type-attribute.entity';
 import { Like } from '../src/likes/like.entity';
 
 const dataSource = new DataSource({
@@ -10,7 +12,7 @@ const dataSource = new DataSource({
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-  entities: [User, Accumulator, Like],
+  entities: [User, BatteryType, Like, Attribute, BatteryTypeAttribute],
   synchronize: true,
 });
 

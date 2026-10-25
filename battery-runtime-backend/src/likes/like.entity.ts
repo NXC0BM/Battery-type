@@ -11,6 +11,7 @@ export class Like {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToOne(() => BatteryType, (batteryType) => batteryType.likes, { onDelete: 'RESTRICT' })  @JoinColumn({ name: 'battery_type_id' })
+  @ManyToOne(() => BatteryType, (batteryType) => batteryType.likes, { onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'battery_type_id' })
   batteryType: BatteryType;
 }

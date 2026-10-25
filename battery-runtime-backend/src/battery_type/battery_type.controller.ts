@@ -104,6 +104,7 @@ export class BatteryTypeController {
       dto.shortDescription,
       dto.capacityMah,
       dto.nominalVoltageV,
+      dto.attributes,
     );
   }
 
