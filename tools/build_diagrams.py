@@ -108,7 +108,7 @@ draw.text((30,1500),'Страницы входа и добавления пок�
 class_img.save(OUT/'diagrams/classes.png')
 # ER: native ERD models and views.
 erdm=obj('ERDDataModel',project,name='PostgreSQL battery_type',ownedElements=[]);project['ownedElements'].append(erdm)
-erd=obj('ERDDiagram',erdm,name='ER атрибуты и значения',ownedViews=[]);erdm['ownedElements'].append(erd)
+erd=obj('ERDDiagram',erdm,name='ER атрибуты и значения',defaultDiagram=True,ownedViews=[]);erdm['ownedElements'].append(erd)
 schemas={
  'battery_type':[('id','INTEGER','PK'),('model_name','VARCHAR(100)',''),('short_description','VARCHAR(255)','NULL'),('status','VARCHAR(20)',''),('image_url','VARCHAR(255)','NULL'),('video_url','VARCHAR(255)','NULL'),('created_at','TIMESTAMP',''),('published_at','TIMESTAMP','NULL'),('completed_at','TIMESTAMP','NULL'),('creator_id','INTEGER','FK'),('moderator_id','INTEGER','FK NULL')],
  'attributes':[('id','INTEGER','PK'),('code','VARCHAR(50)','UQ NULL'),('name','VARCHAR(100)','UQ'),('unit','VARCHAR(20)','NULL')],

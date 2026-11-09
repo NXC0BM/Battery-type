@@ -35,6 +35,7 @@ def new_doc(title):
   st=d.styles[name];st.font.name='Times New Roman';st.font.size=Pt(14);st.font.color.rgb=RGBColor(0,0,0);st.paragraph_format.space_after=Pt(6)
   st.paragraph_format.line_spacing=1.5;st.paragraph_format.first_line_indent=Cm(0 if name!='Normal' else 1.25)
  for name in ['Heading 1','Heading 2','Heading 3']:d.styles[name].font.bold=True
+ d.styles['Normal'].paragraph_format.alignment=WD_ALIGN_PARAGRAPH.JUSTIFY
  d.styles['Title'].font.size=Pt(16);d.core_properties.author='Рыбин М. А.';d.core_properties.title=title
  footer=s.footer.paragraphs[0];footer.alignment=WD_ALIGN_PARAGRAPH.CENTER
  fld=OxmlElement('w:fldSimple');fld.set(qn('w:instr'),'PAGE');footer._p.append(fld)
@@ -56,7 +57,7 @@ def table(d,heads,rows,widths=None,size=11):
    if widths:cell.width=Cm(widths[i])
    tcpr=cell._tc.get_or_add_tcPr();shade=OxmlElement('w:shd');shade.set(qn('w:fill'),'FFFFFF');tcpr.append(shade)
    for para in cell.paragraphs:
-    para.paragraph_format.first_line_indent=Cm(0);para.paragraph_format.line_spacing=1;para.paragraph_format.space_after=Pt(3)
+    para.paragraph_format.alignment=WD_ALIGN_PARAGRAPH.LEFT;para.paragraph_format.first_line_indent=Cm(0);para.paragraph_format.line_spacing=1;para.paragraph_format.space_after=Pt(3)
     para.paragraph_format.keep_with_next=len(t.rows)<=12 and rid<len(t.rows)-1
     for run in para.runs:run.font.size=Pt(size);run.bold=rid==0
   cant=OxmlElement('w:cantSplit');row._tr.get_or_add_trPr().append(cant)
@@ -65,11 +66,79 @@ def table(d,heads,rows,widths=None,size=11):
 def page(d):d.add_paragraph('__TASK_PAGE_BREAK__')
 def fig(d,name,caption,width=16):
  d.add_picture(str(OUT/'diagrams'/name),width=Cm(width));r=d.add_paragraph(caption);r.alignment=WD_ALIGN_PARAGRAPH.CENTER;r.paragraph_format.first_line_indent=Cm(0)
+def centered(d,text,size=14,bold=False,italic=False,after=6):
+ r=p(d,text,bold);r.alignment=WD_ALIGN_PARAGRAPH.CENTER;r.paragraph_format.first_line_indent=Cm(0)
+ r.paragraph_format.line_spacing=1;r.paragraph_format.space_after=Pt(after)
+ for run in r.runs:run.font.size=Pt(size);run.italic=italic
+ return r
+
+def university_heading(d):
+ from copy import deepcopy
+ from io import BytesIO
+ reference=Document(next(Path('C:/Web/course-reference/reports').glob('*.docx')))
+ element=deepcopy(reference.tables[0]._element)
+ for blip in element.iter(qn('a:blip')):
+  old_id=blip.get(qn('r:embed'))
+  if old_id:
+   image=reference.part.related_parts[old_id]
+   new_id,_=d.part.get_or_add_image(BytesIO(image.blob));blip.set(qn('r:embed'),new_id)
+ d._element.body.insert(len(d._element.body)-1,element)
+ for paragraph in element.iter(qn('w:p')):
+  from docx.text.paragraph import Paragraph
+  para=Paragraph(paragraph,d)
+  para.paragraph_format.first_line_indent=Cm(0)
+  para.paragraph_format.line_spacing=1
+  para.paragraph_format.space_before=Pt(0)
+  para.paragraph_format.space_after=Pt(0)
+  para.alignment=WD_ALIGN_PARAGRAPH.CENTER
+  for run in para.runs:run.font.size=Pt(11)
+
 def title(d,subtitle):
- for text in ['Министерство науки и высшего образования Российской Федерации','Московский государственный технический университет','имени Н. Э. Баумана','Кафедра ИУ5']:
-  r=p(d,text);r.alignment=WD_ALIGN_PARAGRAPH.CENTER;r.paragraph_format.first_line_indent=Cm(0)
- p(d);p(d);r=d.add_paragraph('Типы аккумуляторов','Title');r.alignment=WD_ALIGN_PARAGRAPH.CENTER
- r=p(d,subtitle,True);r.alignment=WD_ALIGN_PARAGRAPH.CENTER;p(d);p(d,'Студент группы ИУ5-51Б Рыбин М. А.');p(d,'Руководитель Канев А. И.');p(d);r=p(d,'Москва 2026');r.alignment=WD_ALIGN_PARAGRAPH.CENTER;page(d)
+ university_heading(d)
+ for text in ['ФАКУЛЬТЕТ  ИНФОРМАТИКА И СИСТЕМЫ УПРАВЛЕНИЯ','КАФЕДРА  СИСТЕМЫ ОБРАБОТКИ ИНФОРМАЦИИ И УПРАВЛЕНИЯ']:
+  r=p(d,text);r.alignment=WD_ALIGN_PARAGRAPH.LEFT;r.paragraph_format.first_line_indent=Cm(0)
+  for run in r.runs:run.font.size=Pt(12)
+ p(d);p(d)
+ centered(d,'РАСЧЕТНО-ПОЯСНИТЕЛЬНАЯ ЗАПИСКА',18,True,after=18)
+ centered(d,'К ДОМАШНЕМУ ЗАДАНИЮ',18,True,True,18)
+ centered(d,'НА ТЕМУ',18,True,True,10)
+ centered(d,'Расчёт времени работы устройства от аккумулятора',18,True,True,8)
+ centered(d,'Li-ion, Li-Po, Ni-MH',16,False,False,24)
+ p(d);p(d)
+ for line in ['Студент  ИУ5-51Б             _______________  Рыбин М. А.',
+              '                                               Подпись, дата',
+              'Руководитель                    _______________  Канев А. И.',
+              '                                               Подпись, дата']:
+  r=p(d,line);r.alignment=WD_ALIGN_PARAGRAPH.LEFT;r.paragraph_format.first_line_indent=Cm(0);r.paragraph_format.line_spacing=1
+ p(d);centered(d,'Москва 2026',14)
+ page(d)
+
+def tz_title(d):
+ h(d,'Приложение А Техническое задание')
+ centered(d,'МОСКОВСКИЙ ГОСУДАРСТВЕННЫЙ ТЕХНИЧЕСКИЙ УНИВЕРСИТЕТ',14)
+ centered(d,'имени Н. Э. Баумана',14,after=16)
+ centered(d,'Кафедра систем обработки информации и управления',14,after=16)
+ t=d.add_table(rows=1,cols=2);t.autofit=False
+ for col in t.columns:col.width=Cm(8)
+ for cell,text in zip(t.rows[0].cells,[
+  'УТВЕРЖДАЮ\nЗаведующий кафедрой ИУ5\n_____________________\n«___» __________ 2026 г.',
+  'СОГЛАСОВАНО\nНаучный руководитель\n____________ А. И. Канев\n«___» __________ 2026 г.']):
+  for i,line in enumerate(text.split('\n')):
+   r=cell.paragraphs[0] if i==0 else cell.add_paragraph();r.add_run(line);r.alignment=WD_ALIGN_PARAGRAPH.CENTER;r.paragraph_format.first_line_indent=Cm(0);r.paragraph_format.line_spacing=1;r.paragraph_format.space_after=Pt(4)
+ p(d)
+ centered(d,'Расчёт времени работы устройства от аккумулятора',16,True,after=16)
+ centered(d,'Техническое задание',14)
+ centered(d,'Вид документа',12,after=14)
+ centered(d,'Писчая бумага',14)
+ centered(d,'Вид носителя',12,after=14)
+ centered(d,'6',14)
+ centered(d,'Количество листов',12,after=14)
+ centered(d,'ИСПОЛНИТЕЛЬ',14)
+ centered(d,'Рыбин М. А.',14)
+ centered(d,'«___» __________ 2026 г.',14,after=16)
+ centered(d,'Москва 2026',14)
+ page(d)
+
 api=[
 ('1','GET','/api/battery_type','Опубликованные типы; фильтр ёмкости','minCapacityMah?: integer ≥ 0','BatteryTypeDto[]; 200'),
 ('2','GET','/api/battery_type/feed','Один опубликованный тип; следующий при next=true','id?: integer; next?: boolean','BatteryTypeDto | null; 200/404'),
@@ -135,7 +204,7 @@ h(d,'Источники')
 for s in ['1. Репозиторий курса РИП: https://github.com/iu5git/Web','2. РПЗ Бромберг ИУ5-54Б: https://github.com/iu5git/Web/tree/main/reports','3. Исходный код: https://github.com/NXC0BM/Battery-type','4. NestJS: https://docs.nestjs.com/','5. PostgreSQL: https://www.postgresql.org/docs/16/','6. TypeORM: https://typeorm.io/','7. React: https://react.dev/','8. Redis: https://redis.io/docs/','9. MinIO: https://github.com/minio/minio']:
  source=p(d,s);source.paragraph_format.line_spacing=1;source.paragraph_format.space_after=Pt(2)
  for run in source.runs:run.font.size=Pt(12)
-page(d);h(d,'Приложение А Техническое задание')
+page(d);tz_title(d)
 h(d,'1 Цель',2)
 p(d,'1.1 Необходимо разработать систему, включающую веб-сервис на NestJS и веб-приложение на React, которая позволит специалистам публиковать типы аккумуляторов с их ёмкостью и номинальным напряжением, а пользователям — подбирать типы аккумуляторов по ёмкости, просматривать характеристики и отмечать понравившиеся типы.')
 h(d,'2 Назначение разработки',2)

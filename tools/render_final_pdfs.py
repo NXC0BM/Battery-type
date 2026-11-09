@@ -3,7 +3,7 @@ from pdf2image import convert_from_path
 from PIL import Image,ImageDraw
 import pdfplumber
 folder=Path('submission/qa/final')
-for name in ['report','calculation','guide']:
+for name in ['report','calculation','corrections']:
  target=folder/name;target.mkdir(exist_ok=True)
  images=convert_from_path(str(folder/(name+'.pdf')),dpi=110,poppler_path='C:/Users/MAT/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/poppler/Library/bin')
  for i,im in enumerate(images,1):im.save(target/f'page-{i}.png')
