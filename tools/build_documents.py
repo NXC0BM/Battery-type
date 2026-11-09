@@ -177,10 +177,11 @@ p(d,'6.1 Сервер: Windows и Docker Desktop либо Linux; Node.js 22/24 L
 p(d,'6.2 Фронтенд: React 18, TypeScript 5, Vite 5, React-Bootstrap 2, react-router-dom 6. Проверка API — Postman; диаграммы — StarUML. Клиент: Chromium 120+ или Firefox 120+ с cookie и JavaScript.')
 page(d);h(d,'Приложение Б Методы веб-сервиса')
 p(d,'Домен battery_type',True)
-table(d,['№','Метод и URL','Описание','Вход','Выход'],[(r[0],r[1]+' '+r[2],r[3],r[4],r[5]) for r in api[:7]],[.6,4.4,3.4,4.1,3.5],10)
+table(d,['№','Метод и URL','Описание','Вход','Выход'],[(r[0],r[1]+' '+r[2],r[3],r[4],r[5]) for r in api[:7]],[.8,4.4,3.4,4.1,3.3],10)
 p(d,'Домен users',True)
-table(d,['№','Метод и URL','Описание','Вход','Выход'],[(r[0],r[1]+' '+r[2],r[3],r[4],r[5]) for r in api[7:]],[.6,4.4,3.4,4.1,3.5],10)
-p(d,'Cookie: connect.sid=<значение сессии>. В Postman заголовок Cookie должен быть включён галочкой. Для JSON включён Content-Type: application/json. Для form-data Content-Type формирует сам Postman с boundary; задавать его вручную нельзя.')
+table(d,['№','Метод и URL','Описание','Вход','Выход'],[(r[0],r[1]+' '+r[2],r[3],r[4],r[5]) for r in api[7:]],[.8,4.4,3.4,4.1,3.3],10)
+note=p(d,'Заголовки Postman: Cookie включён у создателя; JSON — Content-Type: application/json. Для form-data Content-Type с boundary формирует Postman.'); note.paragraph_format.line_spacing=1
+for run in note.runs:run.font.size=Pt(12)
 save(d,OUT/'РПЗ_и_ТЗ_исправлено.docx')
 # A single-page calculation (compact typesetting, no title page).
 c=new_doc('Расчёт аппаратных требований для 116 пользователей');c.styles['Normal'].font.size=Pt(10);c.styles['Normal'].paragraph_format.line_spacing=1;c.styles['Normal'].paragraph_format.space_after=Pt(4);c.styles['Normal'].paragraph_format.first_line_indent=Cm(0)
