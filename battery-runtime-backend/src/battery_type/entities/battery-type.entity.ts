@@ -17,10 +17,6 @@ export class BatteryType {
   imageUrl: string;
   @Column({ name: 'video_url', type: 'varchar', length: 255, nullable: true })
   videoUrl: string;
-  @Column({ name: 'capacity_mah', type: 'integer', nullable: true })
-  capacityMah: number;
-  @Column({ name: 'nominal_voltage_v', type: 'numeric', precision: 4, scale: 2, nullable: true })
-  nominalVoltageV: number;
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
   @Column({ name: 'published_at', type: 'timestamp', nullable: true })

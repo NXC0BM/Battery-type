@@ -10,5 +10,6 @@ export class BatteryTypeResponseDto {
   nominalVoltageV: number | null;
   likesCount: number;
   isMine: number; // 0/1
+  isLiked: number; // 0/1: лайк текущего пользователя
   attributes?: AttributeValueDto[]; // доп. характеристики (EAV), заполняются на странице "подробнее"
 }

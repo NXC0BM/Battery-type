@@ -1,0 +1,997 @@
+{
+  "date": "2026-11-09T18:22:47.581Z",
+  "checks": "PASS",
+  "evidence": [
+    {
+      "method": "POST",
+      "path": "/users/register",
+      "status": 201,
+      "data": {
+        "id": 1,
+        "username": "battery_type_1794248567139"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/users/login",
+      "status": 200,
+      "data": {
+        "id": 1
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/battery_type",
+      "status": 201,
+      "data": {
+        "id": 1,
+        "modelName": "LG HG2 18650",
+        "shortDescription": null,
+        "imageUrl": "http://127.0.0.1:59000/bucket1/img-battery_type-1794248567323.jpg",
+        "videoUrl": "http://127.0.0.1:59000/bucket1/vid-battery_type-1794248567343.mp4",
+        "capacityMah": null,
+        "nominalVoltageV": null,
+        "likesCount": 0,
+        "isMine": 1,
+        "isLiked": 0,
+        "attributes": [
+          {
+            "id": 1,
+            "code": null,
+            "name": "Химия",
+            "value": "",
+            "unit": null
+          },
+          {
+            "id": 2,
+            "code": null,
+            "name": "Макс. ток разряда",
+            "value": "",
+            "unit": "А"
+          },
+          {
+            "id": 3,
+            "code": null,
+            "name": "Масса",
+            "value": "",
+            "unit": "г"
+          },
+          {
+            "id": 4,
+            "code": null,
+            "name": "Типоразмер",
+            "value": "",
+            "unit": null
+          },
+          {
+            "id": 5,
+            "code": null,
+            "name": "Ресурс",
+            "value": "",
+            "unit": "циклов"
+          },
+          {
+            "id": 6,
+            "code": "capacity_mah",
+            "name": "Ёмкость",
+            "value": "",
+            "unit": "мА·ч"
+          },
+          {
+            "id": 7,
+            "code": "nominal_voltage_v",
+            "name": "Напряжение",
+            "value": "",
+            "unit": "В"
+          }
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/battery_type/draft",
+      "status": 200,
+      "data": {
+        "id": 1,
+        "modelName": "LG HG2 18650",
+        "shortDescription": null,
+        "imageUrl": "http://127.0.0.1:59000/bucket1/img-battery_type-1794248567323.jpg",
+        "videoUrl": "http://127.0.0.1:59000/bucket1/vid-battery_type-1794248567343.mp4",
+        "capacityMah": null,
+        "nominalVoltageV": null,
+        "likesCount": 0,
+        "isMine": 1,
+        "isLiked": 0,
+        "attributes": [
+          {
+            "id": 1,
+            "code": null,
+            "name": "Химия",
+            "value": "",
+            "unit": null
+          },
+          {
+            "id": 2,
+            "code": null,
+            "name": "Макс. ток разряда",
+            "value": "",
+            "unit": "А"
+          },
+          {
+            "id": 3,
+            "code": null,
+            "name": "Масса",
+            "value": "",
+            "unit": "г"
+          },
+          {
+            "id": 4,
+            "code": null,
+            "name": "Типоразмер",
+            "value": "",
+            "unit": null
+          },
+          {
+            "id": 5,
+            "code": null,
+            "name": "Ресурс",
+            "value": "",
+            "unit": "циклов"
+          },
+          {
+            "id": 6,
+            "code": "capacity_mah",
+            "name": "Ёмкость",
+            "value": "",
+            "unit": "мА·ч"
+          },
+          {
+            "id": 7,
+            "code": "nominal_voltage_v",
+            "name": "Напряжение",
+            "value": "",
+            "unit": "В"
+          }
+        ]
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/battery_type/1/publish",
+      "status": 401,
+      "data": {
+        "message": "Unauthorized",
+        "statusCode": 401
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/battery_type/1/publish",
+      "status": 200,
+      "data": {
+        "id": 1,
+        "modelName": "LG HG2 18650",
+        "shortDescription": "Li-ion аккумулятор 18650 для электроинструмента",
+        "imageUrl": "http://127.0.0.1:59000/bucket1/img-battery_type-1794248567323.jpg",
+        "videoUrl": "http://127.0.0.1:59000/bucket1/vid-battery_type-1794248567343.mp4",
+        "capacityMah": 3000,
+        "nominalVoltageV": 3.6,
+        "likesCount": 0,
+        "isMine": 1,
+        "isLiked": 0,
+        "attributes": [
+          {
+            "id": 1,
+            "code": null,
+            "name": "Химия",
+            "value": "",
+            "unit": null
+          },
+          {
+            "id": 2,
+            "code": null,
+            "name": "Макс. ток разряда",
+            "value": "",
+            "unit": "А"
+          },
+          {
+            "id": 3,
+            "code": null,
+            "name": "Масса",
+            "value": "",
+            "unit": "г"
+          },
+          {
+            "id": 4,
+            "code": null,
+            "name": "Типоразмер",
+            "value": "",
+            "unit": null
+          },
+          {
+            "id": 5,
+            "code": null,
+            "name": "Ресурс",
+            "value": "",
+            "unit": "циклов"
+          },
+          {
+            "id": 6,
+            "code": "capacity_mah",
+            "name": "Ёмкость",
+            "value": "3000",
+            "unit": "мА·ч"
+          },
+          {
+            "id": 7,
+            "code": "nominal_voltage_v",
+            "name": "Напряжение",
+            "value": "3.6",
+            "unit": "В"
+          }
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/battery_type/feed?id=1",
+      "status": 200,
+      "data": {
+        "id": 1,
+        "modelName": "LG HG2 18650",
+        "shortDescription": "Li-ion аккумулятор 18650 для электроинструмента",
+        "imageUrl": "http://127.0.0.1:59000/bucket1/img-battery_type-1794248567323.jpg",
+        "videoUrl": "http://127.0.0.1:59000/bucket1/vid-battery_type-1794248567343.mp4",
+        "capacityMah": 3000,
+        "nominalVoltageV": 3.6,
+        "likesCount": 0,
+        "isMine": 1,
+        "isLiked": 0,
+        "attributes": [
+          {
+            "id": 1,
+            "code": null,
+            "name": "Химия",
+            "value": "",
+            "unit": null
+          },
+          {
+            "id": 2,
+            "code": null,
+            "name": "Макс. ток разряда",
+            "value": "",
+            "unit": "А"
+          },
+          {
+            "id": 3,
+            "code": null,
+            "name": "Масса",
+            "value": "",
+            "unit": "г"
+          },
+          {
+            "id": 4,
+            "code": null,
+            "name": "Типоразмер",
+            "value": "",
+            "unit": null
+          },
+          {
+            "id": 5,
+            "code": null,
+            "name": "Ресурс",
+            "value": "",
+            "unit": "циклов"
+          },
+          {
+            "id": 6,
+            "code": "capacity_mah",
+            "name": "Ёмкость",
+            "value": "3000",
+            "unit": "мА·ч"
+          },
+          {
+            "id": 7,
+            "code": "nominal_voltage_v",
+            "name": "Напряжение",
+            "value": "3.6",
+            "unit": "В"
+          },
+          {
+            "id": 8,
+            "code": null,
+            "name": "Масса_1794248567419",
+            "value": "",
+            "unit": "г"
+          }
+        ]
+      }
+    },
+    {
+      "check": "topic_values_in_vertical_table",
+      "rows": [
+        {
+          "code": "capacity_mah",
+          "value": "3000"
+        },
+        {
+          "code": "nominal_voltage_v",
+          "value": "3.6"
+        }
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/battery_type?minCapacityMah=3000",
+      "status": 200,
+      "data": [
+        {
+          "id": 1,
+          "modelName": "LG HG2 18650",
+          "shortDescription": "Li-ion аккумулятор 18650 для электроинструмента",
+          "imageUrl": "http://127.0.0.1:59000/bucket1/img-battery_type-1794248567323.jpg",
+          "videoUrl": "http://127.0.0.1:59000/bucket1/vid-battery_type-1794248567343.mp4",
+          "capacityMah": 3000,
+          "nominalVoltageV": 3.6,
+          "likesCount": 0,
+          "isMine": 1,
+          "isLiked": 0,
+          "attributes": [
+            {
+              "id": 1,
+              "code": null,
+              "name": "Химия",
+              "value": "",
+              "unit": null
+            },
+            {
+              "id": 2,
+              "code": null,
+              "name": "Макс. ток разряда",
+              "value": "",
+              "unit": "А"
+            },
+            {
+              "id": 3,
+              "code": null,
+              "name": "Масса",
+              "value": "",
+              "unit": "г"
+            },
+            {
+              "id": 4,
+              "code": null,
+              "name": "Типоразмер",
+              "value": "",
+              "unit": null
+            },
+            {
+              "id": 5,
+              "code": null,
+              "name": "Ресурс",
+              "value": "",
+              "unit": "циклов"
+            },
+            {
+              "id": 6,
+              "code": "capacity_mah",
+              "name": "Ёмкость",
+              "value": "3000",
+              "unit": "мА·ч"
+            },
+            {
+              "id": 7,
+              "code": "nominal_voltage_v",
+              "name": "Напряжение",
+              "value": "3.6",
+              "unit": "В"
+            },
+            {
+              "id": 8,
+              "code": null,
+              "name": "Масса_1794248567419",
+              "value": "",
+              "unit": "г"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/battery_type?minCapacityMah=3001",
+      "status": 200,
+      "data": []
+    },
+    {
+      "method": "POST",
+      "path": "/battery_type/1/like",
+      "status": 200,
+      "data": {
+        "id": 1,
+        "modelName": "LG HG2 18650",
+        "shortDescription": "Li-ion аккумулятор 18650 для электроинструмента",
+        "imageUrl": "http://127.0.0.1:59000/bucket1/img-battery_type-1794248567323.jpg",
+        "videoUrl": "http://127.0.0.1:59000/bucket1/vid-battery_type-1794248567343.mp4",
+        "capacityMah": 3000,
+        "nominalVoltageV": 3.6,
+        "likesCount": 1,
+        "isMine": 1,
+        "isLiked": 1,
+        "attributes": [
+          {
+            "id": 1,
+            "code": null,
+            "name": "Химия",
+            "value": "",
+            "unit": null
+          },
+          {
+            "id": 2,
+            "code": null,
+            "name": "Макс. ток разряда",
+            "value": "",
+            "unit": "А"
+          },
+          {
+            "id": 3,
+            "code": null,
+            "name": "Масса",
+            "value": "",
+            "unit": "г"
+          },
+          {
+            "id": 4,
+            "code": null,
+            "name": "Типоразмер",
+            "value": "",
+            "unit": null
+          },
+          {
+            "id": 5,
+            "code": null,
+            "name": "Ресурс",
+            "value": "",
+            "unit": "циклов"
+          },
+          {
+            "id": 6,
+            "code": "capacity_mah",
+            "name": "Ёмкость",
+            "value": "3000",
+            "unit": "мА·ч"
+          },
+          {
+            "id": 7,
+            "code": "nominal_voltage_v",
+            "name": "Напряжение",
+            "value": "3.6",
+            "unit": "В"
+          },
+          {
+            "id": 8,
+            "code": null,
+            "name": "Масса_1794248567419",
+            "value": "",
+            "unit": "г"
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/battery_type/1/like",
+      "status": 200,
+      "data": {
+        "id": 1,
+        "modelName": "LG HG2 18650",
+        "shortDescription": "Li-ion аккумулятор 18650 для электроинструмента",
+        "imageUrl": "http://127.0.0.1:59000/bucket1/img-battery_type-1794248567323.jpg",
+        "videoUrl": "http://127.0.0.1:59000/bucket1/vid-battery_type-1794248567343.mp4",
+        "capacityMah": 3000,
+        "nominalVoltageV": 3.6,
+        "likesCount": 1,
+        "isMine": 1,
+        "isLiked": 1,
+        "attributes": [
+          {
+            "id": 1,
+            "code": null,
+            "name": "Химия",
+            "value": "",
+            "unit": null
+          },
+          {
+            "id": 2,
+            "code": null,
+            "name": "Макс. ток разряда",
+            "value": "",
+            "unit": "А"
+          },
+          {
+            "id": 3,
+            "code": null,
+            "name": "Масса",
+            "value": "",
+            "unit": "г"
+          },
+          {
+            "id": 4,
+            "code": null,
+            "name": "Типоразмер",
+            "value": "",
+            "unit": null
+          },
+          {
+            "id": 5,
+            "code": null,
+            "name": "Ресурс",
+            "value": "",
+            "unit": "циклов"
+          },
+          {
+            "id": 6,
+            "code": "capacity_mah",
+            "name": "Ёмкость",
+            "value": "3000",
+            "unit": "мА·ч"
+          },
+          {
+            "id": 7,
+            "code": "nominal_voltage_v",
+            "name": "Напряжение",
+            "value": "3.6",
+            "unit": "В"
+          },
+          {
+            "id": 8,
+            "code": null,
+            "name": "Масса_1794248567419",
+            "value": "",
+            "unit": "г"
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/battery_type/1/like",
+      "status": 200,
+      "data": {
+        "id": 1,
+        "modelName": "LG HG2 18650",
+        "shortDescription": "Li-ion аккумулятор 18650 для электроинструмента",
+        "imageUrl": "http://127.0.0.1:59000/bucket1/img-battery_type-1794248567323.jpg",
+        "videoUrl": "http://127.0.0.1:59000/bucket1/vid-battery_type-1794248567343.mp4",
+        "capacityMah": 3000,
+        "nominalVoltageV": 3.6,
+        "likesCount": 0,
+        "isMine": 1,
+        "isLiked": 0,
+        "attributes": [
+          {
+            "id": 1,
+            "code": null,
+            "name": "Химия",
+            "value": "",
+            "unit": null
+          },
+          {
+            "id": 2,
+            "code": null,
+            "name": "Макс. ток разряда",
+            "value": "",
+            "unit": "А"
+          },
+          {
+            "id": 3,
+            "code": null,
+            "name": "Масса",
+            "value": "",
+            "unit": "г"
+          },
+          {
+            "id": 4,
+            "code": null,
+            "name": "Типоразмер",
+            "value": "",
+            "unit": null
+          },
+          {
+            "id": 5,
+            "code": null,
+            "name": "Ресурс",
+            "value": "",
+            "unit": "циклов"
+          },
+          {
+            "id": 6,
+            "code": "capacity_mah",
+            "name": "Ёмкость",
+            "value": "3000",
+            "unit": "мА·ч"
+          },
+          {
+            "id": 7,
+            "code": "nominal_voltage_v",
+            "name": "Напряжение",
+            "value": "3.6",
+            "unit": "В"
+          },
+          {
+            "id": 8,
+            "code": null,
+            "name": "Масса_1794248567419",
+            "value": "",
+            "unit": "г"
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/battery_type/1/like",
+      "status": 400,
+      "data": {
+        "message": [
+          "like must be one of the following values: 0, 1"
+        ],
+        "error": "Bad Request",
+        "statusCode": 400
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/battery_type?minCapacityMah=wrong",
+      "status": 400,
+      "data": {
+        "message": "Ёмкость должна быть целым неотрицательным числом",
+        "error": "Bad Request",
+        "statusCode": 400
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/battery_type/feed",
+      "status": 200,
+      "data": {
+        "id": 1,
+        "modelName": "LG HG2 18650",
+        "shortDescription": "Li-ion аккумулятор 18650 для электроинструмента",
+        "imageUrl": "http://127.0.0.1:59000/bucket1/img-battery_type-1794248567323.jpg",
+        "videoUrl": "http://127.0.0.1:59000/bucket1/vid-battery_type-1794248567343.mp4",
+        "capacityMah": 3000,
+        "nominalVoltageV": 3.6,
+        "likesCount": 0,
+        "isMine": 1,
+        "isLiked": 0,
+        "attributes": [
+          {
+            "id": 1,
+            "code": null,
+            "name": "Химия",
+            "value": "",
+            "unit": null
+          },
+          {
+            "id": 2,
+            "code": null,
+            "name": "Макс. ток разряда",
+            "value": "",
+            "unit": "А"
+          },
+          {
+            "id": 3,
+            "code": null,
+            "name": "Масса",
+            "value": "",
+            "unit": "г"
+          },
+          {
+            "id": 4,
+            "code": null,
+            "name": "Типоразмер",
+            "value": "",
+            "unit": null
+          },
+          {
+            "id": 5,
+            "code": null,
+            "name": "Ресурс",
+            "value": "",
+            "unit": "циклов"
+          },
+          {
+            "id": 6,
+            "code": "capacity_mah",
+            "name": "Ёмкость",
+            "value": "3000",
+            "unit": "мА·ч"
+          },
+          {
+            "id": 7,
+            "code": "nominal_voltage_v",
+            "name": "Напряжение",
+            "value": "3.6",
+            "unit": "В"
+          },
+          {
+            "id": 8,
+            "code": null,
+            "name": "Масса_1794248567419",
+            "value": "",
+            "unit": "г"
+          }
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/battery_type/feed?id=1&next=true",
+      "status": 200,
+      "data": {
+        "id": 1,
+        "modelName": "LG HG2 18650",
+        "shortDescription": "Li-ion аккумулятор 18650 для электроинструмента",
+        "imageUrl": "http://127.0.0.1:59000/bucket1/img-battery_type-1794248567323.jpg",
+        "videoUrl": "http://127.0.0.1:59000/bucket1/vid-battery_type-1794248567343.mp4",
+        "capacityMah": 3000,
+        "nominalVoltageV": 3.6,
+        "likesCount": 0,
+        "isMine": 1,
+        "isLiked": 0,
+        "attributes": [
+          {
+            "id": 1,
+            "code": null,
+            "name": "Химия",
+            "value": "",
+            "unit": null
+          },
+          {
+            "id": 2,
+            "code": null,
+            "name": "Макс. ток разряда",
+            "value": "",
+            "unit": "А"
+          },
+          {
+            "id": 3,
+            "code": null,
+            "name": "Масса",
+            "value": "",
+            "unit": "г"
+          },
+          {
+            "id": 4,
+            "code": null,
+            "name": "Типоразмер",
+            "value": "",
+            "unit": null
+          },
+          {
+            "id": 5,
+            "code": null,
+            "name": "Ресурс",
+            "value": "",
+            "unit": "циклов"
+          },
+          {
+            "id": 6,
+            "code": "capacity_mah",
+            "name": "Ёмкость",
+            "value": "3000",
+            "unit": "мА·ч"
+          },
+          {
+            "id": 7,
+            "code": "nominal_voltage_v",
+            "name": "Напряжение",
+            "value": "3.6",
+            "unit": "В"
+          },
+          {
+            "id": 8,
+            "code": null,
+            "name": "Масса_1794248567419",
+            "value": "",
+            "unit": "г"
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/users/logout",
+      "status": 200,
+      "data": {
+        "ok": true
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/battery_type/draft",
+      "status": 401,
+      "data": {
+        "message": "Unauthorized",
+        "statusCode": 401
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/battery_type",
+      "status": 200,
+      "data": [
+        {
+          "id": 1,
+          "modelName": "LG HG2 18650",
+          "shortDescription": "Li-ion аккумулятор 18650 для электроинструмента",
+          "imageUrl": "http://127.0.0.1:59000/bucket1/img-battery_type-1794248567323.jpg",
+          "videoUrl": "http://127.0.0.1:59000/bucket1/vid-battery_type-1794248567343.mp4",
+          "capacityMah": 3000,
+          "nominalVoltageV": 3.6,
+          "likesCount": 0,
+          "isMine": 0,
+          "isLiked": 0,
+          "attributes": [
+            {
+              "id": 1,
+              "code": null,
+              "name": "Химия",
+              "value": "",
+              "unit": null
+            },
+            {
+              "id": 2,
+              "code": null,
+              "name": "Макс. ток разряда",
+              "value": "",
+              "unit": "А"
+            },
+            {
+              "id": 3,
+              "code": null,
+              "name": "Масса",
+              "value": "",
+              "unit": "г"
+            },
+            {
+              "id": 4,
+              "code": null,
+              "name": "Типоразмер",
+              "value": "",
+              "unit": null
+            },
+            {
+              "id": 5,
+              "code": null,
+              "name": "Ресурс",
+              "value": "",
+              "unit": "циклов"
+            },
+            {
+              "id": 6,
+              "code": "capacity_mah",
+              "name": "Ёмкость",
+              "value": "3000",
+              "unit": "мА·ч"
+            },
+            {
+              "id": 7,
+              "code": "nominal_voltage_v",
+              "name": "Напряжение",
+              "value": "3.6",
+              "unit": "В"
+            },
+            {
+              "id": 8,
+              "code": null,
+              "name": "Масса_1794248567419",
+              "value": "",
+              "unit": "г"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/users/login",
+      "status": 200,
+      "data": {
+        "id": 1
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/battery_type",
+      "status": 201,
+      "data": {
+        "id": 2,
+        "modelName": "Удаляемый тип аккумулятора",
+        "shortDescription": null,
+        "imageUrl": null,
+        "videoUrl": null,
+        "capacityMah": null,
+        "nominalVoltageV": null,
+        "likesCount": 0,
+        "isMine": 1,
+        "isLiked": 0,
+        "attributes": [
+          {
+            "id": 1,
+            "code": null,
+            "name": "Химия",
+            "value": "",
+            "unit": null
+          },
+          {
+            "id": 2,
+            "code": null,
+            "name": "Макс. ток разряда",
+            "value": "",
+            "unit": "А"
+          },
+          {
+            "id": 3,
+            "code": null,
+            "name": "Масса",
+            "value": "",
+            "unit": "г"
+          },
+          {
+            "id": 4,
+            "code": null,
+            "name": "Типоразмер",
+            "value": "",
+            "unit": null
+          },
+          {
+            "id": 5,
+            "code": null,
+            "name": "Ресурс",
+            "value": "",
+            "unit": "циклов"
+          },
+          {
+            "id": 6,
+            "code": "capacity_mah",
+            "name": "Ёмкость",
+            "value": "",
+            "unit": "мА·ч"
+          },
+          {
+            "id": 7,
+            "code": "nominal_voltage_v",
+            "name": "Напряжение",
+            "value": "",
+            "unit": "В"
+          },
+          {
+            "id": 8,
+            "code": null,
+            "name": "Масса_1794248567419",
+            "value": "",
+            "unit": "г"
+          }
+        ]
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/battery_type/2",
+      "status": 204,
+      "data": ""
+    },
+    {
+      "method": "GET",
+      "path": "/battery_type/feed?id=2",
+      "status": 404,
+      "data": {
+        "message": "Тип аккумулятора не найден",
+        "error": "Not Found",
+        "statusCode": 404
+      }
+    }
+  ]
+}

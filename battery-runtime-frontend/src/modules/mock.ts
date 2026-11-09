@@ -116,3 +116,12 @@ export const BATTERY_TYPES_MOCK: BatteryType[] = [
     ],
   },
 ];
+
+// Два поля по теме представлены также в вертикальном наборе атрибутов.
+for (const batteryType of BATTERY_TYPES_MOCK) {
+  batteryType.attributes = [
+    { name: "Ёмкость", value: String(batteryType.capacityMah ?? ""), unit: "мА·ч" },
+    { name: "Напряжение", value: String(batteryType.nominalVoltageV ?? ""), unit: "В" },
+    ...(batteryType.attributes ?? []),
+  ];
+}

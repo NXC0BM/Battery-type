@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Unique } from 'typeorm';
 import { User } from '../users/user.entity';
 import { BatteryType } from '../battery_type/entities/battery-type.entity';
 
 @Entity('likes')
+@Unique(['user', 'batteryType'])
 export class Like {
   @PrimaryGeneratedColumn()
   id: number;

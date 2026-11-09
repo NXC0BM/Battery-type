@@ -1,0 +1,27 @@
+{
+  "result": "PASS",
+  "schema": "migration_check_1794251006370",
+  "repeatRun": "PASS",
+  "values": [
+    {
+      "id": 1,
+      "code": "capacity_mah",
+      "value": "3000"
+    },
+    {
+      "id": 1,
+      "code": "nominal_voltage_v",
+      "value": "3.60"
+    },
+    {
+      "id": 2,
+      "code": "capacity_mah",
+      "value": "3350"
+    },
+    {
+      "id": 2,
+      "code": "nominal_voltage_v",
+      "value": "3.60"
+    }
+  ]
+}

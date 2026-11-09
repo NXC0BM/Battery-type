@@ -1,269 +1,133 @@
-import {
-  Injectable,
-  BadRequestException,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, EntityManager } from 'typeorm';
 import { BatteryType } from './entities/battery-type.entity';
 import { BatteryTypeStatus } from './entities/battery-type-status.enum';
 import { Like } from '../likes/like.entity';
+import { Attribute } from '../attributes/attribute.entity';
+import { BatteryTypeAttribute } from '../attributes/battery-type-attribute.entity';
 import { MinioService } from '../minio/minio.service';
-import { BatteryTypeResponseDto } from './dto/battery-type-response.dto';
 import { AttributeValueDto } from './dto/attribute-value.dto';
 
 @Injectable()
 export class BatteryTypeService {
   constructor(
-    @InjectRepository(BatteryType)
-    private batteryTypeRepository: Repository<BatteryType>,
-    @InjectRepository(Like)
-    private likeRepository: Repository<Like>,
+    @InjectRepository(BatteryType) private batteryTypeRepository: Repository<BatteryType>,
+    @InjectRepository(Like) private likeRepository: Repository<Like>,
     private minioService: MinioService,
   ) {}
 
-  private toDto(
-    entity: any,
-    likesCount: number,
-    currentUserId?: number,
-  ): BatteryTypeResponseDto {
+  private query(userId?: number) {
+    return this.batteryTypeRepository.createQueryBuilder('b').leftJoinAndSelect('b.creator', 'creator');
+  }
+
+  private async toDto(entity: any, userId?: number) {
+    const attributes = await this.getAttributes(entity.id);
+    const likesCount = await this.likeRepository.count({ where: { batteryType: { id: entity.id } } });
+    const isLiked = userId ? await this.likeRepository.exists({ where: { batteryType: { id: entity.id }, user: { id: userId } } }) : false;
+    const numberValue = (code: string) => {
+      const attr = attributes.find((a: any) => a.code === code);
+      return attr?.value === '' || attr?.value == null ? null : Number(attr.value);
+    };
     return {
-      id: entity.id,
-      modelName: entity.modelName,
-      shortDescription: entity.shortDescription ?? null,
-      imageUrl: this.minioService.buildUrl(entity.imageUrl),
-      videoUrl: this.minioService.buildUrl(entity.videoUrl),
-      capacityMah: entity.capacityMah ?? null,
-      nominalVoltageV:
-        entity.nominalVoltageV !== null && entity.nominalVoltageV !== undefined
-          ? Number(entity.nominalVoltageV)
-          : null,
+      id: entity.id, modelName: entity.modelName, shortDescription: entity.shortDescription ?? null,
+      imageUrl: this.minioService.buildUrl(entity.imageUrl), videoUrl: this.minioService.buildUrl(entity.videoUrl),
+      capacityMah: numberValue('capacity_mah'), nominalVoltageV: numberValue('nominal_voltage_v'),
       likesCount,
-      isMine: currentUserId && entity.creator?.id === currentUserId ? 1 : 0,
+      isMine: userId && entity.creator?.id === userId ? 1 : 0,
+      isLiked: isLiked ? 1 : 0, attributes,
     };
   }
 
-  // GET список
-  async findPublished(
-    minCapacityMah?: number,
-    currentUserId?: number,
-  ): Promise<BatteryTypeResponseDto[]> {
-    const qb = this.batteryTypeRepository
-      .createQueryBuilder('a')
-      .leftJoinAndSelect('a.creator', 'creator')
-      .where('a.status = :status', { status: BatteryTypeStatus.PUBLISHED });
-
-    if (minCapacityMah) {
-      qb.andWhere('a.capacityMah >= :min', { min: minCapacityMah });
+  async findPublished(minCapacityMah?: number, userId?: number) {
+    const qb = this.query(userId).where('b.status = :status', { status: BatteryTypeStatus.PUBLISHED });
+    if (minCapacityMah !== undefined) {
+      qb.andWhere(`EXISTS (SELECT 1 FROM battery_type_attributes v JOIN attributes a ON a.id = v.attribute_id
+        WHERE v.battery_type_id = b.id AND a.code = 'capacity_mah'
+        AND CASE WHEN v.value ~ '^[0-9]+([.][0-9]+)?$' THEN v.value::numeric END >= :minimum)`, { minimum: minCapacityMah });
     }
-
-    qb.addSelect(
-      (sub) =>
-        sub.select('COUNT(*)').from(Like, 'l').where('l.battery_type_id = a.id'),
-      'likesCount',
-    );
-
-    const { entities, raw } = await qb.orderBy('a.id', 'ASC').getRawAndEntities();
-
-    return entities.map((entity, i) =>
-      this.toDto(entity, parseInt(raw[i]?.likesCount ?? '0', 10), currentUserId),
-    );
+    return Promise.all((await qb.orderBy('b.id', 'ASC').getMany()).map(row => this.toDto(row, userId)));
   }
 
-  // GET лента
-  async getFeedItem(
-    id?: number,
-    next?: boolean,
-    currentUserId?: number,
-  ): Promise<BatteryTypeResponseDto | null> {
-    let targetId = id;
-
-    if (next && id) {
-      const nextRow = await this.batteryTypeRepository.query(
-        `SELECT id FROM battery_type WHERE status = 'published' AND id > $1 ORDER BY id ASC LIMIT 1`,
-        [id],
-      );
-      targetId = nextRow[0]?.id ?? id;
-    }
-
-    if (!targetId) {
-      const firstRow = await this.batteryTypeRepository.query(
-        `SELECT id FROM battery_type WHERE status = 'published' ORDER BY id ASC LIMIT 1`,
-      );
-      targetId = firstRow[0]?.id;
-    }
-
-    if (!targetId) return null;
-
-    const rows = await this.batteryTypeRepository.query(
-      `SELECT a.id, a.model_name AS "modelName", a.short_description AS "shortDescription",
-              a.image_url AS "imageUrl", a.video_url AS "videoUrl",
-              a.capacity_mah AS "capacityMah", a.nominal_voltage_v AS "nominalVoltageV",
-              a.creator_id AS "creatorId",
-              (SELECT COUNT(*) FROM likes l WHERE l.battery_type_id = a.id) AS "likesCount"
-       FROM battery_type a
-       WHERE a.id = $1 AND a.status = 'published'`,
-      [targetId],
-    );
-    const row = rows[0];
-    if (!row) return null;
-
-    return {
-      id: row.id,
-      modelName: row.modelName,
-      shortDescription: row.shortDescription ?? null,
-      imageUrl: this.minioService.buildUrl(row.imageUrl),
-      videoUrl: this.minioService.buildUrl(row.videoUrl),
-      capacityMah: row.capacityMah ?? null,
-      nominalVoltageV: row.nominalVoltageV !== null ? Number(row.nominalVoltageV) : null,
-      likesCount: parseInt(row.likesCount ?? '0', 10),
-      isMine: currentUserId && row.creatorId === currentUserId ? 1 : 0,
-      attributes: await this.getAttributes(row.id),
-    };
+  async getFeedItem(id?: number, next = false, userId?: number): Promise<any> {
+    const qb = this.query(userId).where('b.status = :status', { status: BatteryTypeStatus.PUBLISHED });
+    if (id !== undefined) qb.andWhere(next ? 'b.id > :id' : 'b.id = :id', { id });
+    const row = await qb.orderBy('b.id', 'ASC').take(1).getOne();
+    if (!row && next) return this.getFeedItem(undefined, false, userId);
+    if (!row && id !== undefined) throw new NotFoundException('Тип аккумулятора не найден');
+    return row ? this.toDto(row, userId) : null;
   }
 
-  // Доп. характеристики услуги (EAV): JOIN атрибутов и вертикальной таблицы значений
-  async getAttributes(batteryTypeId: number): Promise<AttributeValueDto[]> {
-    const rows = await this.batteryTypeRepository.query(
-      `SELECT at.name, bta.value, at.unit
-       FROM battery_type_attributes bta
-       JOIN attributes at ON at.id = bta.attribute_id
-       WHERE bta.battery_type_id = $1
-       ORDER BY at.name`,
-      [batteryTypeId],
-    );
-    return rows.map((r: any) => ({ name: r.name, value: r.value, unit: r.unit ?? undefined }));
+  async getAttributes(batteryTypeId: number): Promise<any[]> {
+    // LEFT JOIN от справочника показывает новый атрибут у всех типов аккумуляторов.
+    return this.batteryTypeRepository.query(`SELECT a.id, a.code, a.name, COALESCE(v.value, '') AS value, a.unit
+      FROM attributes a LEFT JOIN battery_type_attributes v
+      ON v.attribute_id = a.id AND v.battery_type_id = $1 ORDER BY a.id`, [batteryTypeId]);
   }
 
-  // Сохранение доп. характеристик: атрибут ищется по имени (создаётся, если нет),
-  // значение вставляется/обновляется в battery_type_attributes
-  private async saveAttributes(batteryTypeId: number, attributes: AttributeValueDto[]): Promise<void> {
-    for (const a of attributes) {
-      const attr = await this.batteryTypeRepository.query(
-        `INSERT INTO attributes (name, unit) VALUES ($1, $2)
-         ON CONFLICT (name) DO UPDATE SET unit = COALESCE(EXCLUDED.unit, attributes.unit)
-         RETURNING id`,
-        [a.name, a.unit ?? null],
-      );
-      await this.batteryTypeRepository.query(
-        `INSERT INTO battery_type_attributes (battery_type_id, attribute_id, value) VALUES ($1, $2, $3)
-         ON CONFLICT (battery_type_id, attribute_id) DO UPDATE SET value = EXCLUDED.value`,
-        [batteryTypeId, attr[0].id, a.value],
-      );
-    }
+  private async saveValue(manager: EntityManager, batteryTypeId: number, attributeId: number, value: string) {
+    const repository = manager.getRepository(BatteryTypeAttribute);
+    const where = { batteryType: { id: batteryTypeId }, attribute: { id: attributeId } };
+    if (value === '') { await repository.delete(where); return; }
+    await repository.upsert({ ...where, value }, { conflictPaths: ['batteryType', 'attribute'] });
   }
 
-  // GET черновик текущего пользователя
-  async getDraft(userId: number): Promise<BatteryTypeResponseDto | null> {
-    const draft = await this.batteryTypeRepository.findOne({
-      where: { creator: { id: userId }, status: BatteryTypeStatus.DRAFT },
-      relations: { creator: true },
+  async getDraft(userId: number) {
+    const row = await this.query(userId).where('b.creator_id = :userId AND b.status = :status',
+      { userId, status: BatteryTypeStatus.DRAFT }).getOne();
+    return row ? this.toDto(row, userId) : null;
+  }
+
+  async createDraft(modelName: string, userId: number, image?: Express.Multer.File, video?: Express.Multer.File) {
+    if (!modelName?.trim() || modelName.length > 100) throw new BadRequestException('Укажите модель до 100 символов');
+    if (await this.getDraft(userId)) throw new BadRequestException('Черновик уже существует');
+    const imageKey = image ? await this.minioService.uploadFile(image.buffer, image.originalname, 'img') : null;
+    const videoKey = video ? await this.minioService.uploadFile(video.buffer, video.originalname, 'vid') : null;
+    const saved = await this.batteryTypeRepository.save(this.batteryTypeRepository.create({
+      modelName: modelName.trim(), status: BatteryTypeStatus.DRAFT, imageUrl: imageKey, videoUrl: videoKey, creator: { id: userId },
+    }));
+    return this.toDto({ ...saved, creator: { id: userId } }, userId);
+  }
+
+  async publish(id: number, userId: number, shortDescription: string, capacityMah: number,
+    nominalVoltageV: number, attributes: AttributeValueDto[] = []) {
+    await this.batteryTypeRepository.manager.transaction(async manager => {
+      const repository = manager.getRepository(BatteryType);
+      const draft = await repository.findOne({ where: { id }, relations: { creator: true } });
+      if (!draft) throw new NotFoundException();
+      if (draft.creator.id !== userId) throw new ForbiddenException();
+      if (draft.status !== BatteryTypeStatus.DRAFT) throw new BadRequestException('Можно публиковать только черновик');
+      for (const [code, value] of [['capacity_mah', capacityMah], ['nominal_voltage_v', nominalVoltageV]] as const) {
+        const attr = await manager.getRepository(Attribute).findOneBy({ code });
+        if (!attr) throw new BadRequestException('Сначала выполните миграцию атрибутов');
+        await this.saveValue(manager, id, attr.id, String(value));
+      }
+      for (const value of attributes) {
+        const attr = await manager.getRepository(Attribute).findOneBy({ name: value.name });
+        if (!attr || ['capacity_mah', 'nominal_voltage_v'].includes(attr.code))
+          throw new BadRequestException('Неизвестный атрибут или повтор ёмкости/напряжения');
+        await this.saveValue(manager, id, attr.id, value.value);
+      }
+      draft.shortDescription = shortDescription;
+      draft.status = BatteryTypeStatus.PUBLISHED;
+      draft.publishedAt = new Date();
+      await repository.save(draft);
     });
-    if (!draft) return null;
-    return this.toDto(draft, 0, userId);
+    return this.getFeedItem(id, false, userId);
   }
 
-  // POST добавление + файлы
-  async createDraft(
-    modelName: string,
-    userId: number,
-    imageFile?: Express.Multer.File,
-    videoFile?: Express.Multer.File,
-  ): Promise<BatteryTypeResponseDto> {
-    const existing = await this.batteryTypeRepository.findOne({
-      where: { creator: { id: userId }, status: BatteryTypeStatus.DRAFT },
-    });
-    if (existing) {
-      throw new BadRequestException();
-    }
-
-    let imageKey: string | undefined;
-    let videoKey: string | undefined;
-    if (imageFile) {
-      imageKey = await this.minioService.uploadFile(imageFile.buffer, imageFile.originalname, 'img');
-    }
-    if (videoFile) {
-      videoKey = await this.minioService.uploadFile(videoFile.buffer, videoFile.originalname, 'vid');
-    }
-
-    const draft = this.batteryTypeRepository.create({
-      modelName,
-      status: BatteryTypeStatus.DRAFT,
-      imageUrl: imageKey,
-      videoUrl: videoKey,
-      creator: { id: userId } as any,
-    });
-    const saved = await this.batteryTypeRepository.save(draft);
-    return this.toDto({ ...saved, creator: { id: userId } }, 0, userId);
+  async remove(id: number, userId: number) {
+    const row = await this.batteryTypeRepository.findOne({ where: { id }, relations: { creator: true } });
+    if (!row || row.status === BatteryTypeStatus.DELETED) throw new NotFoundException();
+    if (row.creator.id !== userId) throw new ForbiddenException();
+    await this.batteryTypeRepository.query(`UPDATE battery_type SET status = 'deleted', completed_at = now() WHERE id = $1`, [id]);
   }
 
-  // PUT публикация (только свой черновик -> published)
-  async publish(
-    id: number,
-    userId: number,
-    shortDescription: string,
-    capacityMah: number,
-    nominalVoltageV: number,
-    attributes?: AttributeValueDto[],
-  ): Promise<BatteryTypeResponseDto> {
-    const draft = await this.batteryTypeRepository.findOne({
-      where: { id },
-      relations: { creator: true },
-    });
-
-    if (!draft) throw new NotFoundException();
-    if (draft.creator.id !== userId) throw new ForbiddenException();
-    if (draft.status !== BatteryTypeStatus.DRAFT) throw new BadRequestException();
-
-    draft.shortDescription = shortDescription;
-    draft.capacityMah = capacityMah;
-    draft.nominalVoltageV = nominalVoltageV;
-    draft.status = BatteryTypeStatus.PUBLISHED;
-    draft.publishedAt = new Date();
-    draft.moderator = { id: userId } as any;
-
-    const saved = await this.batteryTypeRepository.save(draft);
-    if (attributes?.length) {
-      await this.saveAttributes(saved.id, attributes);
-    }
-    return { ...this.toDto(saved, 0, userId), attributes: await this.getAttributes(saved.id) };
-  }
-
-  // DELETE — только свои, soft delete через raw SQL UPDATE
-  async remove(id: number, userId: number): Promise<void> {
-    const batteryType = await this.batteryTypeRepository.findOne({
-      where: { id },
-      relations: { creator: true },
-    });
-
-    if (!batteryType || batteryType.status === BatteryTypeStatus.DELETED) {
+  async setLike(batteryTypeId: number, userId: number, like: number) {
+    if (!await this.batteryTypeRepository.findOneBy({ id: batteryTypeId, status: BatteryTypeStatus.PUBLISHED }))
       throw new NotFoundException();
-    }
-    if (batteryType.creator.id !== userId) {
-      throw new ForbiddenException();
-    }
-
-    await this.batteryTypeRepository.query(
-      `UPDATE battery_type SET status = 'deleted', completed_at = now() WHERE id = $1`,
-      [id],
-    );
-  }
-
-  // POST like — 0/1
-  async setLike(batteryTypeId: number, userId: number, like: number): Promise<void> {
-    const existing = await this.likeRepository.findOne({
-      where: { user: { id: userId }, batteryType: { id: batteryTypeId } },
-    });
-
-    if (like === 1 && !existing) {
-      const newLike = this.likeRepository.create({
-        user: { id: userId } as any,
-        batteryType: { id: batteryTypeId } as any,
-      });
-      await this.likeRepository.save(newLike);
-    } else if (like === 0 && existing) {
-      await this.likeRepository.remove(existing);
-    }
+    const where = { user: { id: userId }, batteryType: { id: batteryTypeId } };
+    if (like === 1) await this.likeRepository.upsert(where, { conflictPaths: ['user', 'batteryType'] });
+    else await this.likeRepository.delete(where);
   }
 }

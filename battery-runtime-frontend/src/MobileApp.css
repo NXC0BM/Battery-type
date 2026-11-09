@@ -4,14 +4,15 @@
 body {
     margin: 0;
     background: #eeeeee;
-    color: #333333;
+    color: #000000;
     font-family: "PT Sans", Helvetica, Arial, sans-serif;
 }
 
 .appShell {
-    max-width: 420px;
+    position: relative;
+    width: 420px;
     margin: 0 auto;
-    min-height: 100vh;
+    min-height: 800px;
     background: #f7f7f7;
     box-shadow: 0 0 24px rgba(0, 0, 0, 0.12);
 }

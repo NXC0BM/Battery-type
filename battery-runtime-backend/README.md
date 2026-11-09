@@ -1,124 +1,106 @@
-# Battery Runtime — REST API (ЛР3)
+# battery_type — бэкенд NestJS
 
-REST API сервис для учёта аккумуляторов: карточки-черновики, публикация, лента, лайки, мягкое удаление. Хранение данных — PostgreSQL (TypeORM), файлы изображений/видео — MinIO.
+Поля темы: ёмкость в мА·ч и номинальное напряжение в В. Фильтрация по минимальной ёмкости. Два домена API: battery_type и users.
 
-## Таблицы базы данных
+## Запуск отдельного проверочного окружения
+
+```powershell
+Copy-Item .env.example .env
+docker compose -p battery-type-review -f compose.review.yml up -d
+npm ci
+npm run review:init
+npm run build
+npm start
+```
+
+Порт API задаётся PORT в .env. Для проверок этого комплекта используется 53000. Swagger: http://127.0.0.1:53000/api/docs. Проверочное окружение использует собственные тома, БД battery_type_review и порты PostgreSQL 55432, Redis 56379, MinIO 59000/59001. Его пароли в .env.example предназначены для локальной демонстрации.
+
+## Миграция существующей БД
+
+Сначала сделать резервную копию. Указать подключения в .env и выполнить `npm run migrate`. Runner переименует accumulators при наличии старой таблицы, создаст таблицы атрибутов, перенесёт существующие значения и удалит два прежних столбца. При дубликатах лайков/черновиков миграция прервётся: данные автоматически не удаляются. `synchronize` отключён. Старый scripts/migrate.ts с synchronize не использовать.
+
+## Таблицы
 
 ### battery_type
 
-| Колонка | Тип | Описание |
+| Поле | Тип | Ограничения |
 |---|---|---|
-| id | serial, PK | идентификатор |
-| model_name | varchar(100) | название модели |
-| short_description | varchar(255), nullable | краткое описание (заполняется при публикации) |
-| status | varchar(20) | `draft` / `published` / `deleted` |
-| image_url | varchar(255), nullable | ключ файла фото в MinIO |
-| video_url | varchar(255), nullable | ключ файла видео в MinIO |
-| capacity_mah | integer, nullable | ёмкость, мА·ч |
-| nominal_voltage_v | numeric(4,2), nullable | номинальное напряжение, В |
-| created_at | timestamp | дата создания |
-| published_at | timestamp, nullable | дата публикации |
-| creator_id | FK → users.id | владелец карточки |
+| id | INTEGER | PK |
+| model_name | VARCHAR(100) |  |
+| short_description | VARCHAR(255) | NULL |
+| status | VARCHAR(20) |  |
+| image_url | VARCHAR(255) | NULL |
+| video_url | VARCHAR(255) | NULL |
+| created_at | TIMESTAMP |  |
+| published_at | TIMESTAMP | NULL |
+| completed_at | TIMESTAMP | NULL |
+| creator_id | INTEGER | FK |
+| moderator_id | INTEGER | FK NULL |
+
+### attributes
+
+| Поле | Тип | Ограничения |
+|---|---|---|
+| id | INTEGER | PK |
+| code | VARCHAR(50) | UQ NULL |
+| name | VARCHAR(100) | UQ |
+| unit | VARCHAR(20) | NULL |
+
+### battery_type_attributes
+
+| Поле | Тип | Ограничения |
+|---|---|---|
+| id | INTEGER | PK |
+| battery_type_id | INTEGER | FK |
+| attribute_id | INTEGER | FK |
+| value | VARCHAR(255) |  |
 
 ### users
 
-| Колонка | Тип | Описание |
+| Поле | Тип | Ограничения |
 |---|---|---|
-| id | serial, PK | идентификатор |
-| username | varchar | имя пользователя |
+| id | INTEGER | PK |
+| username | VARCHAR(50) | UQ |
+| password | VARCHAR(255) |  |
 
 ### likes
 
-| Колонка | Тип | Описание |
+| Поле | Тип | Ограничения |
 |---|---|---|
-| id | serial, PK | идентификатор |
-| user_id | FK → users.id | кто поставил лайк |
-| battery_type_id | FK → battery_type.id | какой карточке |
+| id | INTEGER | PK |
+| user_id | INTEGER | FK |
+| battery_type_id | INTEGER | FK |
 
-Уникальность пары (user_id, battery_type_id) не даёт одному пользователю лайкнуть карточку дважды.
+Ёмкость и напряжение находятся только в `battery_type_attributes`. `attributes.code`: capacity_mah / nominal_voltage_v; общие названия: Ёмкость / Напряжение. Отсутствие строки значения означает пустое значение. LEFT JOIN начинается от общего справочника, поэтому новый атрибут виден у всех типов.
 
-### attributes (EAV — атрибуты)
+Ограничения: UNIQUE (battery_type_id, attribute_id), UNIQUE (user_id, battery_type_id), один draft на creator_id. Каскадное удаление запрещено; DELETE API — изменение status на deleted.
 
-| Поле | Тип | Описание |
+## HTTP API
+
+| Метод | URL | Действие |
 |---|---|---|
-| id | serial PK | идентификатор атрибута |
-| name | varchar(100) unique | название характеристики («Химия», «Масса», …) |
-| unit | varchar(20) null | единица измерения |
+| GET | /api/battery_type | Опубликованные типы; фильтр ёмкости |
+| GET | /api/battery_type/feed | Один опубликованный тип; следующий при next=true |
+| GET | /api/battery_type/draft | Черновик текущего создателя |
+| POST | /api/battery_type | Создание черновика и загрузка файлов |
+| PUT | /api/battery_type/:id/publish | Публикация своего черновика |
+| DELETE | /api/battery_type/:id | Логическое удаление своего типа |
+| POST | /api/battery_type/:id/like | Поставить или отменить лайк |
+| POST | /api/users/register | Регистрация специалиста |
+| POST | /api/users/login | Вход и создание сессии Redis |
+| POST | /api/users/logout | Выход и удаление сессии Redis |
 
-### battery_type_attributes (EAV — значения, М-М)
+Публичны GET списка и ленты, регистрация и вход. Остальные операции с типами требуют Cookie connect.sid; публикация и удаление разрешены только владельцу. POST like принимает 0/1: 1 создаёт связь, 0 удаляет; повторный 1 не создаёт дубликат. В ответе isLiked — текущий пользователь, likesCount — общее количество лайков.
 
-| Поле | Тип | Описание |
-|---|---|---|
-| id | serial PK | идентификатор |
-| battery_type_id | int FK → battery_type.id | услуга |
-| attribute_id | int FK → attributes.id | атрибут |
-| value | varchar(255) | значение атрибута для услуги |
+В JSON публикации: shortDescription, capacityMah (integer ≥1), nominalVoltageV (0.01..99.99), attributes? (существующие атрибуты). Системные поля запрещены. При создании используются multipart modelName, image, video.
 
-Уникальность (battery_type_id, attribute_id). Миграция: `migrations/002_attributes_eav.sql`.
-Атрибуты передаются необязательным массивом `attributes: [{ name, value, unit? }]` в `PUT /api/battery_type/:id/publish`
-и возвращаются в карточке ленты (`GET /api/battery_type/feed`) — странице «подробнее об услуге».
+## Проверки
 
-## Методы сервисов
-
-### BatteryTypeService
-
-| Метод | Через что | Описание |
-|---|---|---|
-| `findPublished(minCapacityMah?)` | ORM (QueryBuilder) | список опубликованных карточек, фильтр по ёмкости, подсчёт лайков подзапросом |
-| `getFeedItem(id?, next?)` | raw SQL (курсор) | одна карточка ленты — текущая или следующая по id |
-| `getDraft()` | ORM | черновик текущего пользователя |
-| `createDraft(modelName, imageFile?, videoFile?)` | ORM + MinIO | создаёт черновик, загружает файлы в MinIO |
-| `publish(id, shortDescription, capacityMah, nominalVoltageV)` | ORM | переводит черновик в статус published |
-| `remove(id)` | raw SQL (курсор, UPDATE) | мягкое удаление — статус meняется на deleted; доступно только владельцу карточки |
-| `setLike(batteryTypeId, like)` | ORM | ставит/снимает лайк, с проверкой текущего состояния |
-
-### UsersService
-
-| Метод | Описание |
-|---|---|
-| `register(username)` | создаёт нового пользователя |
-| `login()` | возвращает текущего пользователя (заглушка без авторизации, см. `CurrentUserProvider`) |
-
-## REST API — маршруты
-
-### Users (`/api/users`)
-
-| Метод | Путь | Описание |
-|---|---|---|
-| POST | `/api/users/register` | регистрация |
-| POST | `/api/users/login` | вход |
-| POST | `/api/users/logout` | выход |
-
-### BatteryType (`/api/battery_type`)
-
-| Метод | Путь | Описание |
-|---|---|---|
-| GET | `/api/battery_type` | список опубликованных, фильтр `?minCapacityMah=` |
-| GET | `/api/battery_type/feed` | лента, параметры `?id=&next=true` |
-| GET | `/api/battery_type/draft` | черновик текущего пользователя |
-| POST | `/api/battery_type` | создать черновик (`form-data`: `modelName`, `image`, `video`) |
-| PUT | `/api/battery_type/:id/publish` | опубликовать черновик |
-| DELETE | `/api/battery_type/:id` | удалить (только своё) |
-| POST | `/api/battery_type/:id/like` | поставить/снять лайк (`{ "like": 0 \| 1 }`) |
-
-## Хранение файлов
-
-Картинки и видео загружаются в MinIO (бакет `bucket1`). В БД хранится только имя файла (ключ), полный URL собирается сервисом `MinioService.buildUrl(key)` при формировании ответа API.
-
-## Активные сессии (Redis + Lua)
-
-Сессии хранятся в Redis (connect-redis, ключи `sess:<sid>`). Скрипт `scripts/redis/active_sessions.lua`
-обходит ключи через `SCAN`, разбирает JSON сессии и выводит только авторизованные сессии (`userId`) с TTL.
-
-```bash
-npm run sessions
-# или
-docker exec redis redis-cli EVAL "$(cat scripts/redis/active_sessions.lua)" 0
+```powershell
+npm run review:migration
+npm run review:verify
 ```
 
-Пример вывода:
+Запускать проверки только с DB_DATABASE=battery_type_review и отдельным окружением. Отчёты — ../submission/evidence. Postman-коллекция — ../submission/postman/battery_type.postman_collection.json.
 
-```
-1) "active sessions: 1"
-2) "userId=5 | ttl=86400s | sess:abc..."
-```
+Фронтенд ЛР5 подготовлен отдельно в C:/Web/Battery-type-frontend. Адаптивность, PWA, Redux и Tauri в эту ЛР не добавляются.

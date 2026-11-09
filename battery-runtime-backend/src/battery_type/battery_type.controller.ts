@@ -13,9 +13,10 @@ import {
   HttpCode,
   UseInterceptors,
   UploadedFiles,
+  BadRequestException,
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiOperation, ApiCookieAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiCookieAuth, ApiBody, ApiConsumes, ApiQuery } from '@nestjs/swagger';
 import { BatteryTypeService } from './battery_type.service';
 import { PublishBatteryTypeDto } from './dto/publish-battery-type.dto';
 import { LikeBatteryTypeDto } from './dto/like-battery-type.dto';
@@ -28,24 +29,31 @@ export class BatteryTypeController {
 
   // GET список — доступно гостям, isMine считается если есть сессия
   @Get()
+  @ApiQuery({ name: 'minCapacityMah', required: false, type: Number })
   @ApiOperation({ summary: 'Список опубликованных карточек (доступно без авторизации)' })
   async getList(
     @Query('minCapacityMah') minCapacityMah?: string,
     @Req() req?: any,
   ) {
-    const min = minCapacityMah ? parseInt(minCapacityMah, 10) : undefined;
+    if (minCapacityMah !== undefined && !/^\d+$/.test(minCapacityMah))
+      throw new BadRequestException('Ёмкость должна быть целым неотрицательным числом');
+    const min = minCapacityMah !== undefined ? Number(minCapacityMah) : undefined;
     return this.batteryTypeService.findPublished(min, req?.session?.userId);
   }
 
   // GET лента — доступно гостям
   @Get('feed')
+  @ApiQuery({ name: 'id', required: false, type: Number })
+  @ApiQuery({ name: 'next', required: false, type: Boolean })
   @ApiOperation({ summary: 'Лента (доступно без авторизации)' })
   async getFeed(
     @Query('id') id?: string,
     @Query('next') next?: string,
     @Req() req?: any,
   ) {
-    const parsedId = id ? parseInt(id, 10) : undefined;
+    if (id !== undefined && !/^[1-9]\d*$/.test(id)) throw new BadRequestException('Некорректный id');
+    if (next !== undefined && !['true', 'false'].includes(next)) throw new BadRequestException('next: true или false');
+    const parsedId = id ? Number(id) : undefined;
     return this.batteryTypeService.getFeedItem(
       parsedId,
       next === 'true',
@@ -64,6 +72,10 @@ export class BatteryTypeController {
 
   // POST добавление — требует авторизации
   @Post()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ schema: { type: 'object', required: ['modelName'], properties: {
+    modelName: { type: 'string' }, image: { type: 'string', format: 'binary' }, video: { type: 'string', format: 'binary' },
+  } } })
   @UseGuards(SessionAuthGuard)
   @ApiCookieAuth('connect.sid')
   @ApiOperation({ summary: 'Создать черновик с файлами' })

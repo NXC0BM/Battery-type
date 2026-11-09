@@ -10,7 +10,7 @@ export class BatteryTypeAttribute {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => BatteryType, (batteryType) => batteryType.attributes, { onDelete: 'CASCADE' })
+  @ManyToOne(() => BatteryType, (batteryType) => batteryType.attributes, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'battery_type_id' })
   batteryType: BatteryType;
 

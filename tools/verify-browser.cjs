@@ -1,0 +1,22 @@
+const {chromium}=require('C:/Users/MAT/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const fs=require('fs');
+(async()=>{
+ const browser=await chromium.launch({executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',headless:true});
+ const page=await browser.newPage({viewport:{width:1280,height:1000}});const errors=[];const api=[];
+ page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(r.url().includes('/api/'))api.push(r.url())});
+ fs.mkdirSync('submission/evidence/screenshots',{recursive:true});
+ await page.goto('http://127.0.0.1:53001/battery_type');await page.waitForSelector('.batteryCard, .grid');
+ await page.screenshot({path:'submission/evidence/screenshots/lab5-01-grid.png',fullPage:true});
+ const input=page.locator('input[type=range]');await input.fill('3000');await input.dispatchEvent('change');await page.getByRole('button',{name:'Показать'}).click();await page.waitForTimeout(300);
+ await page.screenshot({path:'submission/evidence/screenshots/lab5-02-filter.png',fullPage:true});
+ const card=page.locator('.grid').getByRole('button').first();
+ if(await card.count())await card.click();else await page.locator('.grid').locator('a, .batteryCard, .battery-card').first().click();
+ await page.waitForSelector('.feedTitle');await page.screenshot({path:'submission/evidence/screenshots/lab5-03-feed.png',fullPage:true});
+ const shellWidth=await page.locator('.appShell').evaluate(e=>e.getBoundingClientRect().width);
+ await page.setViewportSize({width:700,height:1000});const sameWidth=await page.locator('.appShell').evaluate(e=>e.getBoundingClientRect().width);
+ if(shellWidth!==420||sameWidth!==420)throw Error('Макет должен сохранять ширину 420px');
+ if(errors.length||api.length)throw Error(JSON.stringify({errors,api}));
+ const docs=await browser.newPage({viewport:{width:1440,height:1000}});await docs.goto('http://127.0.0.1:53000/api/docs');await docs.waitForSelector('.swagger-ui');await docs.screenshot({path:'submission/evidence/screenshots/swagger.png',fullPage:true});
+ fs.writeFileSync('submission/evidence/frontend-verification.json',JSON.stringify({result:'PASS',errors,apiRequests:api,shellWidths:[shellWidth,sameWidth]},null,2));
+ await browser.close();console.log('PASS: grid, capacity filter, feed, no API requests, no JS errors, fixed width 420px');
+})().catch(e=>{console.error(e);process.exitCode=1});

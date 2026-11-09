@@ -1,8 +1,8 @@
 export const ROUTES = {
-  FEED: "/lenta",
-  ADD: "/dobavlenie",
-  GRID: "/plitka",
-  LOGIN: "/vhod",
+  FEED: "/battery_type/feed",
+  ADD: "/battery_type/draft",
+  GRID: "/battery_type",
+  LOGIN: "/users/login",
 };
 export type RouteKeyType = keyof typeof ROUTES;
 export const ROUTE_LABELS: { [key in RouteKeyType]: string } = {

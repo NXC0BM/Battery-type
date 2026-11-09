@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS attributes (
 
 CREATE TABLE IF NOT EXISTS battery_type_attributes (
   id              SERIAL PRIMARY KEY,
-  battery_type_id INTEGER NOT NULL REFERENCES battery_type(id) ON DELETE CASCADE,
+  battery_type_id INTEGER NOT NULL REFERENCES battery_type(id) ON DELETE RESTRICT,
   attribute_id    INTEGER NOT NULL REFERENCES attributes(id) ON DELETE RESTRICT,
   value           VARCHAR(255) NOT NULL,
   CONSTRAINT uq_battery_type_attribute UNIQUE (battery_type_id, attribute_id)

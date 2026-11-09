@@ -1,0 +1,12 @@
+[
+  "GET /api/battery_type",
+  "GET /api/battery_type/feed",
+  "GET /api/battery_type/draft",
+  "POST /api/battery_type",
+  "PUT /api/battery_type/:id/publish",
+  "DELETE /api/battery_type/:id",
+  "POST /api/battery_type/:id/like",
+  "POST /api/users/register",
+  "POST /api/users/login",
+  "POST /api/users/logout"
+]

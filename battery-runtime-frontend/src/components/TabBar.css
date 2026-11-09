@@ -1,10 +1,8 @@
 .tabBar {
-    position: fixed;
+    position: absolute;
     bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 420px;
+    left: 0;
+    width: 420px;
     height: 60px;
     display: flex;
     border-top: 1px solid #e2ded2;

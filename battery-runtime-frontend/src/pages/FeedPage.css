@@ -1,6 +1,6 @@
 .feedPage {
     position: relative;
-    height: calc(100vh - 60px);
+    height: 740px;
     overflow: hidden;
     background: linear-gradient(200deg, #2a2f33, #14171a 65%);
 }
@@ -112,6 +112,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: calc(100vh - 60px);
+    height: 740px;
     color: #767676;
 }

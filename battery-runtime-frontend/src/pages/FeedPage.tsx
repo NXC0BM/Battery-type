@@ -1,12 +1,11 @@
 import "./FeedPage.css";
 import { FC, useEffect, useState } from "react";
 import { Button, Spinner } from "react-bootstrap";
-import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { BatteryType, getBatteryTypes, getFeedItem } from "../modules/batteryApi";
 import { AttributesList } from "../components/AttributesList";
 import { ShortDescription } from "../components/ShortDescription";
 import { ROUTES } from "../Routes";
-import { AppOutletContext } from "../AppLayout";
 
 const defaultImage = "/DefaultImage.jpg";
 const defaultVideo = "/DefaultVideo.mp4";
@@ -16,7 +15,7 @@ export const FeedPage: FC = () => {
   const { id } = useParams();
   const [item, setItem] = useState<BatteryType | null>();
   const [mediaFailed, setMediaFailed] = useState(false);
-  const { cards, setCards } = useOutletContext<AppOutletContext>();
+  const [cards, setCards] = useState<BatteryType[]>([]);
   const navigate = useNavigate();
 
   // при смене id в адресе загружаем карточку вместе с атрибутами
@@ -29,7 +28,7 @@ export const FeedPage: FC = () => {
   // если ленту открыли по прямой ссылке — загружаем список, чтобы знать порядок для «Далее»
   useEffect(() => {
     if (!cards.length) getBatteryTypes().then(setCards);
-  }, [cards.length, setCards]);
+  }, [cards.length]);
 
   const handleNext = () => {
     if (!item || !cards.length) return;
