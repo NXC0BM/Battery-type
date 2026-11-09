@@ -10,7 +10,7 @@ async function bootstrap() {
   app.setBaseViewsDir(join(process.cwd(), 'views'));
   app.setViewEngine('hbs');
 
-  await app.listen(3000);
-  console.log('AMPHOUR backend запущен: http://172.23.98.58:3000/03-plitka');
+  await app.listen(Number(process.env.PORT || 53012));
+  console.log('Battery Type backend запущен: http://172.23.98.58:3000/battery_type');
 }
 bootstrap();

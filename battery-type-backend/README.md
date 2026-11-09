@@ -1,4 +1,4 @@
-# AMPHOUR — battery-runtime-backend (Sprint 1)
+# Battery Type — battery-runtime-backend (Sprint 1)
 
 Расчёт времени работы устройства от аккумулятора. Бэкенд на NestJS,
 коллекция в памяти (без БД), картинки/видео — из Minio.
@@ -12,7 +12,7 @@ npm install
 ## Настройка Minio
 
 Убедитесь, что Minio запущен и в bucket `battery-runtime` (публичный доступ)
-загружены файлы с именами, указанными в `src/accumulators/accumulators.service.ts`
+загружены файлы с именами, указанными в `src/battery_type/battery_type.service.ts`
 (поля `imageKey` / `videoKey`), например `acc-samsung-25r.jpg`.
 
 Если адрес Minio отличается от `http://localhost:9000`, задайте переменную окружения:
@@ -28,26 +28,26 @@ npm run start:dev
 ```
 
 Откройте:
-- http://localhost:3000/03-plitka — Плитка
-- http://localhost:3000/02-dobavlenie — Добавление
-- http://localhost:3000/01-lenta — Лента
+- http://localhost:3000/battery_type — Плитка
+- http://localhost:3000/battery_type/draft — Добавление
+- http://localhost:3000/battery_type/feed — Лента
 
 Чистые JSON-эндпоинты (для показа во вкладке Network на защите):
-- GET /api/accumulators?minCapacityMah=2000
-- GET /api/accumulators/draft
-- GET /api/accumulators/:id?next=true
+- GET /api/battery_type?minCapacityMah=2000
+- GET /api/battery_type/draft
+- GET /api/battery_type/:id?next=true
 
 ## Структура
 
 ```
 src/
-  accumulators/
+  battery_type/
     entities/
-      accumulator.entity.ts
-      accumulator-status.enum.ts
-    accumulators.controller.ts
-    accumulators.service.ts
-    accumulators.module.ts
+      battery_type.entity.ts
+      battery_type-status.enum.ts
+    battery_type.controller.ts
+    battery_type.service.ts
+    battery_type.module.ts
   minio/
     minio.service.ts
     minio.module.ts
