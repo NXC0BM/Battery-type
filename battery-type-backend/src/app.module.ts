@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { AccumulatorsModule } from './accumulators/accumulators.module';
+import { BatteryTypeModule } from './battery_type/battery_type.module';
 
 @Module({
-  imports: [AccumulatorsModule],
+  imports: [BatteryTypeModule],
 })
 export class AppModule {}

@@ -1,8 +1,8 @@
-import { AccumulatorStatus } from './accumulator-status.enum';
+import { BatteryTypeStatus } from './battery_type-status.enum';
 
 export type ChemistryType = 'Li-ion' | 'Li-Po' | 'Ni-MH';
 
-export class Accumulator {
+export class BatteryType {
   id: number;
   modelName: string;
   chemistryType: ChemistryType;
@@ -11,6 +11,6 @@ export class Accumulator {
   description: string;
   imageKey: string;
   videoKey: string;
-  status: AccumulatorStatus;
-  likedByEngineerIds: number[];
+  status: BatteryTypeStatus;
+  likesCount: number;
 }

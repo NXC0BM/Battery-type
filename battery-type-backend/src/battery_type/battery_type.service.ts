@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { Accumulator } from './entities/accumulator.entity';
-import { AccumulatorStatus } from './entities/accumulator-status.enum';
+import { BatteryType } from './entities/battery_type.entity';
+import { BatteryTypeStatus } from './entities/battery_type-status.enum';
 import { MinioService } from '../minio/minio.service';
 
 @Injectable()
-export class AccumulatorsService {
+export class BatteryTypeService {
   // Коллекция — просто массив в памяти, без БД (по заданию sprint 1)
-  private accumulators: Accumulator[] = [
+  private battery_type: BatteryType[] = [
     {
       id: 1,
       modelName: 'Samsung INR18650-25R',
@@ -17,8 +17,8 @@ export class AccumulatorsService {
         'Высокотоковый цилиндрический аккумулятор 18650 для мощных устройств.',
       imageKey: 'acc-samsung-25r.jpg',
       videoKey: 'acc-samsung-25r.mp4',
-      status: AccumulatorStatus.PUBLISHED,
-      likedByEngineerIds: [3, 7, 12],
+      status: BatteryTypeStatus.PUBLISHED,
+      likesCount: 3,
     },
     {
       id: 2,
@@ -29,8 +29,8 @@ export class AccumulatorsService {
       description: 'Аккумулятор с высокой токоотдачей, часто применяется в фонарях.',
       imageKey: 'acc-lg-hg2.jpg',
       videoKey: 'acc-lg-hg2.mp4',
-      status: AccumulatorStatus.PUBLISHED,
-      likedByEngineerIds: [4],
+      status: BatteryTypeStatus.PUBLISHED,
+      likesCount: 1,
     },
     {
       id: 3,
@@ -41,8 +41,8 @@ export class AccumulatorsService {
       description: 'Один из самых ёмких 18650-элементов на рынке.',
       imageKey: 'acc-panasonic-ncr18650b.jpg',
       videoKey: 'acc-panasonic-ncr18650b.mp4',
-      status: AccumulatorStatus.PUBLISHED,
-      likedByEngineerIds: [1, 9],
+      status: BatteryTypeStatus.PUBLISHED,
+      likesCount: 2,
     },
     {
       id: 4,
@@ -53,8 +53,8 @@ export class AccumulatorsService {
       description: 'Пальчиковый аккумулятор с низким саморазрядом.',
       imageKey: 'acc-nimh-eneloop.jpg',
       videoKey: 'acc-nimh-eneloop.mp4',
-      status: AccumulatorStatus.PUBLISHED,
-      likedByEngineerIds: [2, 5, 8, 11],
+      status: BatteryTypeStatus.PUBLISHED,
+      likesCount: 4,
     },
     {
       id: 5,
@@ -65,8 +65,8 @@ export class AccumulatorsService {
       description: 'Промышленный аккумулятор формата C повышенной ёмкости.',
       imageKey: 'acc-varta-industrial-c.jpg',
       videoKey: 'acc-varta-industrial-c.mp4',
-      status: AccumulatorStatus.PUBLISHED,
-      likedByEngineerIds: [6, 10],
+      status: BatteryTypeStatus.PUBLISHED,
+      likesCount: 2,
     },
     {
       id: 6,
@@ -77,8 +77,8 @@ export class AccumulatorsService {
       description: 'Плоский LiPo-аккумулятор для компактных устройств.',
       imageKey: 'acc-ace-power-lipo-2200.jpg',
       videoKey: 'acc-ace-power-lipo-2200.mp4',
-      status: AccumulatorStatus.PUBLISHED,
-      likedByEngineerIds: [1, 2, 3, 4, 13],
+      status: BatteryTypeStatus.PUBLISHED,
+      likesCount: 5,
     },
     {
       id: 7,
@@ -89,8 +89,8 @@ export class AccumulatorsService {
       description: 'Высокотоковый аккумулятор, популярен в электронных устройствах.',
       imageKey: 'acc-sony-vtc6.jpg',
       videoKey: 'acc-sony-vtc6.mp4',
-      status: AccumulatorStatus.PUBLISHED,
-      likedByEngineerIds: [9],
+      status: BatteryTypeStatus.PUBLISHED,
+      likesCount: 1,
     },
     {
       id: 8,
@@ -101,14 +101,14 @@ export class AccumulatorsService {
       description: 'Аккумулятор-пауч для компактных устройств с высоким током разряда.',
       imageKey: 'acc-lipo-5000.jpg',
       videoKey: 'acc-lipo-5000.mp4',
-      status: AccumulatorStatus.DRAFT,
-      likedByEngineerIds: [],
+      status: BatteryTypeStatus.DRAFT,
+      likesCount: 0,
     },
   ];
 
   constructor(private readonly minioService: MinioService) {}
 
-  private toView(acc: Accumulator, currentMinCapacityMah?: number) {
+  private toView(acc: BatteryType, currentMinCapacityMah?: number) {
     return {
       id: acc.id,
       modelName: acc.modelName,
@@ -118,39 +118,39 @@ export class AccumulatorsService {
       description: acc.description,
       imageUrl: this.minioService.buildUrl(acc.imageKey),
       videoUrl: this.minioService.buildUrl(acc.videoKey),
-      likesCount: acc.likedByEngineerIds.length,
+      likesCount: acc.likesCount,
       currentMinCapacityMah: currentMinCapacityMah ?? '',
     };
   }
 
-  // GET /accumulators — страница "Плитка"
+  // GET /battery_type — страница "Плитка"
   findPublished(minCapacityMah?: number) {
-    return this.accumulators
-      .filter((a) => a.status === AccumulatorStatus.PUBLISHED)
+    return this.battery_type
+      .filter((a) => a.status === BatteryTypeStatus.PUBLISHED)
       .filter((a) => (minCapacityMah ? a.capacityMah >= minCapacityMah : true))
       .map((a) => this.toView(a, minCapacityMah));
   }
 
-  // GET /accumulators/draft — страница "Добавление"
+  // GET /battery_type/draft — страница "Добавление"
   findDraft() {
-    const draft = this.accumulators.find(
-      (a) => a.status === AccumulatorStatus.DRAFT,
+    const draft = this.battery_type.find(
+      (a) => a.status === BatteryTypeStatus.DRAFT,
     );
     return draft ? this.toView(draft) : null;
   }
 
-  // GET /accumulators/:id — страница "Лента"
+  // GET /battery_type/:id — страница "Лента"
   findOnePublished(id: number) {
-    const acc = this.accumulators.find(
-      (a) => a.id === id && a.status === AccumulatorStatus.PUBLISHED,
+    const acc = this.battery_type.find(
+      (a) => a.id === id && a.status === BatteryTypeStatus.PUBLISHED,
     );
     return acc ? this.toView(acc) : null;
   }
 
-  // GET /accumulators/:id?next=true — следующий опубликованный после id
+  // GET /battery_type/:id?next=true — следующий опубликованный после id
   findNextAfter(id: number) {
-    const published = this.accumulators.filter(
-      (a) => a.status === AccumulatorStatus.PUBLISHED,
+    const published = this.battery_type.filter(
+      (a) => a.status === BatteryTypeStatus.PUBLISHED,
     );
     const currentIndex = published.findIndex((a) => a.id === id);
     const nextIndex =

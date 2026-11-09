@@ -2,20 +2,20 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>AMPHOUR — Плитка</title>
+  <title>Battery Type — Плитка</title>
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
   <div class="screen">
     <div class="app-header">
-      <div class="brand">AMPHOUR</div>
+      <div class="brand">Battery Type</div>
       <div class="brand-sub">Расчёт времени работы</div>
       <h1>Аккумуляторы</h1>
       <p class="subtitle">Каталог типов аккумуляторов</p>
     </div>
 
     <!-- Без JavaScript: обычная GET-форма, значение сохраняется через value="" -->
-    <form class="filter-section" method="GET" action="/03-plitka">
+    <form class="filter-section" method="GET" action="/battery_type">
       <div class="filter-label">Ёмкость, мА·ч</div>
       <div class="filter-row">
         <input
@@ -34,8 +34,8 @@
     </form>
 
     <div class="grid">
-      {{#each accumulators}}
-        <a class="acc-card" href="/01-lenta/{{this.id}}">
+      {{#each battery_type}}
+        <a class="acc-card" href="/battery_type/feed/{{this.id}}">
           <div class="acc-thumb" style="background-image: url('{{this.imageUrl}}')"></div>
           <div class="acc-chem">{{this.chemistryType}}</div>
           <div class="acc-name">{{this.modelName}}</div>
@@ -48,13 +48,13 @@
     </div>
 
     <nav class="tabbar">
-      <a href="/01-lenta">
+      <a href="/battery_type/feed">
         <span class="icon">▶</span>Лента
       </a>
-      <a href="/02-dobavlenie">
+      <a href="/battery_type/draft">
         <span class="icon">+</span>Добавление
       </a>
-      <a class="active" href="/03-plitka">
+      <a class="active" href="/battery_type">
         <span class="icon">▦</span>Плитка
       </a>
     </nav>
