@@ -14,7 +14,7 @@ async function bootstrap() {
       }),
     );
   
-  await app.listen(3000);
-  console.log('AMPHOUR REST API запущен на порту 3000 (проверяй по IP из hostname -I)');
+  await app.listen(Number(process.env.PORT || 53013));
+  console.log('Battery Type REST API запущен на порту 3000 (проверяй по IP из hostname -I)');
 }
 bootstrap();

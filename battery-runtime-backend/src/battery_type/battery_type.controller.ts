@@ -13,32 +13,32 @@ import {
   UploadedFiles,
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { AccumulatorsService } from './accumulators.service';
-import { PublishAccumulatorDto } from './dto/publish-accumulator.dto';
-import { LikeAccumulatorDto } from './dto/like-accumulator.dto';
+import { BatteryTypeService } from './battery_type.service';
+import { PublishBatteryTypeDto } from './dto/publish-battery_type.dto';
+import { LikeBatteryTypeDto } from './dto/like-battery_type.dto';
 
-@Controller('accumulators')
-export class AccumulatorsController {
-  constructor(private readonly accumulatorsService: AccumulatorsService) {}
+@Controller('battery_type')
+export class BatteryTypeController {
+  constructor(private readonly battery_typeService: BatteryTypeService) {}
 
   // GET список (только опубликованные), фильтр по ёмкости
   @Get()
   async getList(@Query('minCapacityMah') minCapacityMah?: string) {
     const min = minCapacityMah ? parseInt(minCapacityMah, 10) : undefined;
-    return this.accumulatorsService.findPublished(min);
+    return this.battery_typeService.findPublished(min);
   }
 
   // GET лента (без ид — первая; с ид и next=true — следующая)
   @Get('feed')
   async getFeed(@Query('id') id?: string, @Query('next') next?: string) {
     const parsedId = id ? parseInt(id, 10) : undefined;
-    return this.accumulatorsService.getFeedItem(parsedId, next === 'true');
+    return this.battery_typeService.getFeedItem(parsedId, next === 'true');
   }
 
   // GET черновик текущего пользователя
   @Get('draft')
   async getDraft() {
-    return this.accumulatorsService.getDraft();
+    return this.battery_typeService.getDraft();
   }
 
   // POST добавление + файлы (multipart/form-data)
@@ -55,7 +55,7 @@ export class AccumulatorsController {
     @UploadedFiles()
     files: { image?: Express.Multer.File[]; video?: Express.Multer.File[] },
   ) {
-    return this.accumulatorsService.createDraft(
+    return this.battery_typeService.createDraft(
       modelName,
       files?.image?.[0],
       files?.video?.[0],
@@ -66,9 +66,9 @@ export class AccumulatorsController {
   @Put(':id/publish')
   async publish(
     @Param('id', ParseIntPipe) id: number,
-    @Body() dto: PublishAccumulatorDto,
+    @Body() dto: PublishBatteryTypeDto,
   ) {
-    return this.accumulatorsService.publish(
+    return this.battery_typeService.publish(
       id,
       dto.shortDescription,
       dto.capacityMah,
@@ -80,16 +80,16 @@ export class AccumulatorsController {
   @Delete(':id')
   @HttpCode(204)
   async remove(@Param('id', ParseIntPipe) id: number) {
-    await this.accumulatorsService.remove(id);
+    await this.battery_typeService.remove(id);
   }
 
   @Post(':id/like')
   @HttpCode(200)
   async like(
     @Param('id', ParseIntPipe) id: number,
-    @Body() dto: LikeAccumulatorDto,
+    @Body() dto: LikeBatteryTypeDto,
   ) {
-    await this.accumulatorsService.setLike(id, dto.like);
-    return this.accumulatorsService.getFeedItem(id);
+    await this.battery_typeService.setLike(id, dto.like);
+    return this.battery_typeService.getFeedItem(id);
   }
 }

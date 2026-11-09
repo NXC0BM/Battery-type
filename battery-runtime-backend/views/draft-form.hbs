@@ -2,20 +2,20 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>AMPHOUR — Добавление</title>
+  <title>Battery Type — Добавление</title>
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
   <div class="screen">
     <div class="app-header">
-      <div class="brand">AMPHOUR</div>
+      <div class="brand">Battery Type</div>
       <div class="brand-sub">Расчёт времени работы</div>
       <h1>Добавление <span class="draft-badge">Черновик</span></h1>
     </div>
 
     {{#unless draft}}
       <p style="padding: 0 16px; color: #767676;">Укажите название, фото и видео.</p>
-      <form method="POST" action="/02-dobavlenie/next">
+      <form method="POST" action="/battery_type/draft/next">
         <div class="draft-field">
           <label>Название модели</label>
           <input type="text" name="modelName" required style="width:100%;border:none;font-size:15px;">
@@ -36,7 +36,7 @@
       </form>
     {{else}}
       <p style="padding: 0 16px; color: #767676;">{{draft.modelName}}</p>
-      <form method="POST" action="/02-dobavlenie/publish">
+      <form method="POST" action="/battery_type/draft/publish">
         <div class="draft-field">
           <label>Краткое описание</label>
           <input type="text" name="shortDescription" required style="width:100%;border:none;font-size:15px;">
@@ -56,9 +56,9 @@
     {{/unless}}
 
     <nav class="tabbar">
-      <a href="/01-lenta"><span class="icon">▶</span>Лента</a>
-      <a class="active" href="/02-dobavlenie"><span class="icon">+</span>Добавление</a>
-      <a href="/03-plitka"><span class="icon">▦</span>Плитка</a>
+      <a href="/battery_type/feed"><span class="icon">▶</span>Лента</a>
+      <a class="active" href="/battery_type/draft"><span class="icon">+</span>Добавление</a>
+      <a href="/battery_type"><span class="icon">▦</span>Плитка</a>
     </nav>
   </div>
 </body>
