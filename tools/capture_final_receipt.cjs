@@ -1,0 +1,2 @@
+const {chromium}=require('C:/Users/MAT/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+(async()=>{const b=await chromium.launch({executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',headless:true});try{const p=await b.newPage({viewport:{width:1000,height:700}});await p.goto('file:///C:/Web/Battery-type/submission/qa/postman-lab8.html');await p.screenshot({path:'submission/evidence/lab8/postman-summary.png'});}finally{await b.close();}})().catch(e=>{console.error(e);process.exitCode=1});

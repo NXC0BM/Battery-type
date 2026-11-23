@@ -1,0 +1,10 @@
+{
+  "id": 100107,
+  "modelUrl": "http://127.0.0.1:59000/bucket1/battery-type-model-battery_type-1795457932475.gltf",
+  "checks": [
+    "Malformed GLB rejected before draft creation",
+    "GLTF + image uploaded to MinIO; random angles initialized",
+    "Publish model and EAV topic values",
+    "Another user cannot delete owner model"
+  ]
+}

@@ -1,3 +1,4 @@
+import { BatteryTypeFeedService } from './battery_type-feed.service';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BatteryTypeController } from './battery_type.controller';
@@ -11,6 +12,6 @@ import { MinioModule } from '../minio/minio.module';
 @Module({
   imports: [TypeOrmModule.forFeature([BatteryType, Like, Attribute, BatteryTypeAttribute]), MinioModule],
   controllers: [BatteryTypeController],
-  providers: [BatteryTypeService],
+  providers: [BatteryTypeService, BatteryTypeFeedService],
 })
 export class BatteryTypeModule {}

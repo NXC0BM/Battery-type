@@ -1,4 +1,40 @@
-# battery_type — исправления замечаний преподавателя
+# battery_type — исправления и итоговая ЛР8
+
+Рабочая ветка итогового проекта: `battery_type-lab8`. Старые исправления сохранены в `fixes/teacher-comments` и `fixes/lab1`–`fixes/lab3`.
+
+## Запуск итоговой версии
+
+1. Запустить Docker Desktop. В `battery-runtime-backend` скопировать `.env.example` в `.env`, если файла нет.
+2. В той же папке: `docker compose -p battery-type-review -f compose.review.yml up -d`, `npm ci`, `npm run review:init`, `npm run lab8:seed`, `npm run build`, `node dist/main.js`.
+3. Во второй консоли: `python C:\Web\Battery-type-async\battery_type_async.py`.
+4. Во фронтенде `C:\Web\Battery-type-frontend`: `npm ci`, `npm run dev`.
+
+Каталог: http://127.0.0.1:53001/#/battery_type . Swagger: http://127.0.0.1:53000/api/docs . Данные запускаются в отдельной БД `battery_type_review`, существующие базы не очищаются. Синтетические 100 100 строк отмечены именами LAB8-* и предназначены для исследования индексов; их характеристики не являются паспортами реальных изделий.
+
+Аккаунт только локальной демонстрации: `battery_type_demo` / `BatteryType2026!`. Можно зарегистрировать отдельного пользователя через приложение. Демо-аккаунт создаётся seed-скриптом, а не зашит в логику аутентификации.
+
+`start-lab8.ps1` выполняет подготовку окружения и запуск API. Файлы GLTF должны включать ресурсы внутри одного файла; пример — `submission/examples/battery_type.gltf`.
+
+## Проверки и документы ЛР8
+
+- `npm run lab8:verify`: EAV, пагинация, 100 карточек Redis, callback через 7 секунд, ключ и устаревшие результаты, сессии, лайки, планы EXPLAIN с индексом/без индекса.
+- `npm run lab8:upload`: GLTF и изображение в MinIO, случайные углы, публикация и права владельца.
+- `submission/evidence/lab8`: результаты API, браузера, CLIP, загрузки файлов и Postman CLI (27 запросов, 29 проверок).
+- `submission/РПЗ_ЛР8_проверка2.docx`: итоговая РПЗ с исправлениями по первому результату TestVKR. В Word обновить содержание целиком и сохранить перед повторной проверкой. Точное прохождение TestVKR пока не подтверждено.
+- `submission/Исправлено_ЛР8.docx`: замечания, ответы и подтверждения по образцу пользователя.
+- `submission/WEB_ALL_IN_ONE_fixed.mdj`: пять диаграмм, одна диаграмма классов, два интерфейса; последовательность фронтенда, NestJS и asyncio.
+- `submission/Расчёт_116_пользователей_ЛР8.docx`: расчёт с polling. Начальный набор 100 104 строки; дальнейшие проверки создают дополнительные записи.
+- `submission/literature`: два препринта arXiv 2026 года. Печать и рукописный перевод терминов выполняются отдельно.
+
+Нативное приложение подключается по `http://192.168.1.128:53000/api`. При изменении LAN IP отредактировать `.env.production` нативного репозитория и пересобрать. Не заменять LAN адрес на localhost для показа нативного задания. Первая загрузка CLIP требует сети и скачивания весов.
+
+## Репозитории
+
+- React и mock Pages: https://github.com/NXC0BM/Battery-type-frontend ; https://nxc0bm.github.io/Battery-type-frontend/
+- Tauri: https://github.com/NXC0BM/Battery-type-native
+- Asyncio: https://github.com/NXC0BM/Battery-type-async
+
+## Материалы прежних этапов
 
 Тема: типы аккумуляторов. Ёмкость и напряжение; фильтр по ёмкости; NestJS.
 

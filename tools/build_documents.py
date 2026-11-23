@@ -65,7 +65,8 @@ def table(d,heads,rows,widths=None,size=11):
  d.add_paragraph();return t
 def page(d):d.add_paragraph('__TASK_PAGE_BREAK__')
 def fig(d,name,caption,width=16):
- d.add_picture(str(OUT/'diagrams'/name),width=Cm(width));r=d.add_paragraph(caption);r.alignment=WD_ALIGN_PARAGRAPH.CENTER;r.paragraph_format.first_line_indent=Cm(0)
+ shape=d.add_picture(str(OUT/'diagrams'/name),width=Cm(width));para=d.paragraphs[-1];para.paragraph_format.first_line_indent=Cm(0);para.alignment=WD_ALIGN_PARAGRAPH.CENTER
+ r=d.add_paragraph(caption);r.alignment=WD_ALIGN_PARAGRAPH.CENTER;r.paragraph_format.first_line_indent=Cm(0)
 def centered(d,text,size=14,bold=False,italic=False,after=6):
  r=p(d,text,bold);r.alignment=WD_ALIGN_PARAGRAPH.CENTER;r.paragraph_format.first_line_indent=Cm(0)
  r.paragraph_format.line_spacing=1;r.paragraph_format.space_after=Pt(after)
@@ -78,6 +79,9 @@ def university_heading(d):
  reference=Document(next(Path('C:/Web/course-reference/reports').glob('*.docx')))
  element=deepcopy(reference.tables[0]._element)
  for blip in element.iter(qn('a:blip')):
+  # The reference has both r:embed and a stale r:link. Preserve the embedded
+  # image, otherwise Word may interpret the copied link as our footer part.
+  blip.attrib.pop(qn('r:link'),None)
   old_id=blip.get(qn('r:embed'))
   if old_id:
    image=reference.part.related_parts[old_id]

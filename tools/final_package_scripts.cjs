@@ -1,0 +1,1 @@
+const fs=require('fs');const p='battery-runtime-backend/package.json';const pkg=JSON.parse(fs.readFileSync(p));pkg.scripts.sessions='node scripts/inspect-redis.cjs';fs.writeFileSync(p,JSON.stringify(pkg,null,2)+'\n');

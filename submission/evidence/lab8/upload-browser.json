@@ -1,0 +1,10 @@
+{
+  "id": 100107,
+  "modelUrl": "http://127.0.0.1:59000/bucket1/battery-type-model-battery_type-1795457932475.gltf",
+  "checks": [
+    "Uploaded GLTF HTTP 200",
+    "Three.js canvas visible",
+    "No model fallback error"
+  ],
+  "errors": []
+}

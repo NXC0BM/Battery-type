@@ -1,0 +1,15 @@
+{
+  "checks": [
+    "catalog loads API",
+    "pagination changes",
+    "session login",
+    "Three.js canvas",
+    "delayed rotation visible",
+    "Redux page retained on return",
+    "390px no horizontal overflow",
+    "logout"
+  ],
+  "before": "Углы: 6.208 / 4.858 рад",
+  "after": "Углы: 0.448 / 5.643 рад",
+  "errors": []
+}

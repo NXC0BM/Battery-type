@@ -54,6 +54,26 @@
       "moderator_id",
       "INTEGER",
       "FK NULL"
+    ],
+    [
+      "model_url",
+      "VARCHAR(255)",
+      "NULL"
+    ],
+    [
+      "short_description_en",
+      "VARCHAR(100)",
+      "NULL"
+    ],
+    [
+      "rotation_x",
+      "DOUBLE PRECISION",
+      "NOT NULL"
+    ],
+    [
+      "rotation_y",
+      "DOUBLE PRECISION",
+      "NOT NULL"
     ]
   ],
   "attributes": [

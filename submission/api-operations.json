@@ -6,6 +6,8 @@
   "PUT /api/battery_type/:id/publish",
   "DELETE /api/battery_type/:id",
   "POST /api/battery_type/:id/like",
+  "GET /api/battery_type/descriptions",
+  "PUT /api/battery_type/:id/rotation",
   "POST /api/users/register",
   "POST /api/users/login",
   "POST /api/users/logout"

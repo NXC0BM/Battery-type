@@ -17,7 +17,7 @@ async function main() {
       moderator_id INTEGER REFERENCES users(id) ON DELETE RESTRICT);
     CREATE TABLE IF NOT EXISTS likes (id SERIAL PRIMARY KEY, user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
       battery_type_id INTEGER NOT NULL REFERENCES battery_type(id) ON DELETE RESTRICT);`);
-    for (const file of ['002_attributes_eav.sql', '003_move_topic_fields.sql']) {
+    for (const file of ['002_attributes_eav.sql', '003_move_topic_fields.sql','004_lab8.sql']) {
       await db.query(fs.readFileSync(`migrations/${file}`, 'utf8'));
     }
   } finally { await db.end(); }

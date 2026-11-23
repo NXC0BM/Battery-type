@@ -1,0 +1,8 @@
+{
+  "image": "DefaultImage.jpg",
+  "metric": "(1 + cosine) / 2",
+  "threshold": 0.63,
+  "topK": 3,
+  "status": "Найдено: 2. Близость (1 + cos) / 2: 0.639, 0.632, 0.625",
+  "errors": []
+}

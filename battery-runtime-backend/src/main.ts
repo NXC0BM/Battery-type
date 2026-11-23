@@ -13,6 +13,7 @@ async function bootstrap() {
   app.useStaticAssets(join(process.cwd(), 'public'));
 
   app.setGlobalPrefix('api');
+  app.enableCors({origin: (process.env.BATTERY_TYPE_FRONTEND_ORIGINS || 'http://localhost:53001,http://127.0.0.1:53001,tauri://localhost,http://tauri.localhost').split(','),credentials:true});
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

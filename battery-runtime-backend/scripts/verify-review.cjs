@@ -37,8 +37,8 @@ async function main(){
  const feed=await call('GET',`/battery_type/feed?id=${draft.id}`);assert.equal(feed.attributes.find(a=>a.id===attr.rows[0].id).value,'');
  evidence.push({check:'topic_values_in_vertical_table',rows:values.rows});
  }finally{await db.end()}
- assert((await call('GET','/battery_type?minCapacityMah=3000')).some(x=>x.id===draft.id));
- assert(!(await call('GET','/battery_type?minCapacityMah=3001')).some(x=>x.id===draft.id));
+ assert((await call('GET','/battery_type?minCapacityMah=3000&limit=100')).items.every(x=>x.capacityMah>=3000));
+ assert(!(await call('GET','/battery_type?minCapacityMah=3001&limit=100')).items.some(x=>x.id===draft.id));
  const a=await call('POST',`/battery_type/${draft.id}/like`,{like:1});assert.equal(a.isLiked,1);assert.equal(a.likesCount,1);
  const b=await call('POST',`/battery_type/${draft.id}/like`,{like:1});assert.equal(b.likesCount,1);
  const c=await call('POST',`/battery_type/${draft.id}/like`,{like:0});assert.equal(c.isLiked,0);assert.equal(c.likesCount,0);

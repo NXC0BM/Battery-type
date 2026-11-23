@@ -1,0 +1,98 @@
+[
+  [
+    "1",
+    "GET",
+    "/api/battery_type",
+    "Опубликованные типы; фильтр ёмкости",
+    "minCapacityMah?: integer≥0; page?: integer≥1; limit?: integer 1–100",
+    "{items: BatteryTypeDto[], total: integer, page: integer, limit: integer}; 200/400"
+  ],
+  [
+    "2",
+    "GET",
+    "/api/battery_type/feed",
+    "Один опубликованный тип; следующий при next=true",
+    "id?: integer; next?: boolean; Cookie гостевой сессии",
+    "BatteryTypeDto | null; 200/404; next=true: 503 при недоступном asyncio"
+  ],
+  [
+    "3",
+    "GET",
+    "/api/battery_type/draft",
+    "Черновик текущего создателя",
+    "Cookie: connect.sid",
+    "BatteryTypeDto | null; 200/401"
+  ],
+  [
+    "4",
+    "POST",
+    "/api/battery_type",
+    "Создание черновика и загрузка файлов",
+    "modelName: string; image?: file; video?: file; Cookie; model?: GLB/GLTF file",
+    "BatteryTypeDto; 201/400/401"
+  ],
+  [
+    "5",
+    "PUT",
+    "/api/battery_type/:id/publish",
+    "Публикация своего черновика",
+    "id: integer; shortDescription: string; capacityMah: integer; nominalVoltageV: number; attributes?: array; Cookie; shortDescriptionEn?: ASCII string 50–100",
+    "BatteryTypeDto; 200/400/401/403/404"
+  ],
+  [
+    "6",
+    "DELETE",
+    "/api/battery_type/:id",
+    "Логическое удаление своего типа",
+    "id: integer; Cookie",
+    "204; 401/403/404"
+  ],
+  [
+    "7",
+    "POST",
+    "/api/battery_type/:id/like",
+    "Поставить или отменить лайк",
+    "id: integer; like: 0 | 1; Cookie",
+    "BatteryTypeDto; 200/400/401/404"
+  ],
+  [
+    "11",
+    "GET",
+    "/api/battery_type/descriptions",
+    "Уникальные английские описания CLIP",
+    "Нет",
+    "[{id: integer, description: string}]; 200"
+  ],
+  [
+    "12",
+    "PUT",
+    "/api/battery_type/:id/rotation",
+    "Callback результата вращения",
+    "id: integer; X-Battery-Type-Key: string; rotationX/Y: number; previousX/Y: number",
+    "BatteryTypeDto; 200/400/401/409"
+  ],
+  [
+    "8",
+    "POST",
+    "/api/users/register",
+    "Регистрация специалиста",
+    "username: string; password: string",
+    "id: integer; username: string; 201"
+  ],
+  [
+    "9",
+    "POST",
+    "/api/users/login",
+    "Вход и создание сессии Redis",
+    "username: string; password: string",
+    "id: integer; Set-Cookie; 200/401"
+  ],
+  [
+    "10",
+    "POST",
+    "/api/users/logout",
+    "Выход и удаление сессии Redis",
+    "Cookie: connect.sid",
+    "ok: boolean; 200"
+  ]
+]
