@@ -36,6 +36,7 @@ async function main(){
  const attr=await db.query("INSERT INTO attributes(name,unit) VALUES ($1,'г') RETURNING id",['Масса_'+Date.now()]);
  const feed=await call('GET',`/battery_type/feed?id=${draft.id}`);assert.equal(feed.attributes.find(a=>a.id===attr.rows[0].id).value,'');
  evidence.push({check:'topic_values_in_vertical_table',rows:values.rows});
+ await db.query('DELETE FROM attributes a WHERE id=$1 AND NOT EXISTS (SELECT 1 FROM battery_type_attributes v WHERE v.attribute_id=a.id)',[attr.rows[0].id]);
  }finally{await db.end()}
  assert((await call('GET','/battery_type?minCapacityMah=3000&limit=100')).items.every(x=>x.capacityMah>=3000));
  assert(!(await call('GET','/battery_type?minCapacityMah=3001&limit=100')).items.some(x=>x.id===draft.id));

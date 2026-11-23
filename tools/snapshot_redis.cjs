@@ -1,0 +1,7 @@
+const fs=require('fs'),{spawnSync}=require('child_process');
+const result=spawnSync(process.execPath,['scripts/inspect-redis.cjs'],{cwd:'battery-runtime-backend',encoding:'utf8'});if(result.status)throw Error(result.stderr);
+const data=JSON.parse(result.stdout.slice(result.stdout.indexOf('{'))),feed=data.feeds.find(f=>f.count===100);if(!feed)throw Error('No active 100-card Redis batch');
+fs.writeFileSync('submission/evidence/lab8/redis-feed.json',JSON.stringify({source:'npm run sessions → scripts/inspect-redis.cjs',capturedAt:new Date().toISOString(),...feed},null,2));
+const cells=feed.ids.map((id,i)=>`<td><small>${i+1}</small><br>${id}</td>`);let rows='';for(let i=0;i<cells.length;i+=10)rows+='<tr>'+cells.slice(i,i+10).join('')+'</tr>';
+fs.writeFileSync('submission/qa/redis-feed.html',`<!doctype html><meta charset="utf-8"><style>body{font:20px Arial;margin:28px;color:black;background:white}h1{font-size:26px}table{border-collapse:collapse;width:100%}td{border:1px solid #777;padding:6px;text-align:center}small{font-size:13px;color:#555}p{line-height:1.3}</style><h1>Фактический набор карточек в Redis</h1><p>Источник: scripts/inspect-redis.cjs, чтение работающего Redis.<br>Набор ${feed.batch}, позиция ${feed.position}; записей ${feed.count}; уникальных id ${new Set(feed.ids).size}.</p><table>${rows}</table><p>Сверху в ячейке — номер позиции, снизу — battery_type.id.<br>Это визуализация снимка Redis, не снимок графического клиента.</p>`);
+console.log('Recorded Redis feed with',new Set(feed.ids).size,'unique ids');

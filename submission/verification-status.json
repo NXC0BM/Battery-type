@@ -49,13 +49,13 @@
   },
   "native": {
     "built": true,
-    "workflow": "https://github.com/NXC0BM/Battery-type-native/actions/runs/45237088489",
-    "sha256": "5F6E84A255F04D87B6D23CEB65AFF45C47C2304CA5BAF8147BB1CE80A45915AE",
+    "workflow": "https://github.com/NXC0BM/Battery-type-native/actions/runs/45243867758",
+    "sha256": "30BE05C1378CB6942E3D6DEB230D027206C4987314CAE738D7FA6068240F6FC9",
     "apiUrl": "http://192.168.1.128:53000/api"
   },
   "manual": {
     "testvkr": "Version 3 checked by user in КуР mode: one remaining warning, Ошибка в наименовании работы. No other warnings shown. See evidence/lab8/testvkr-third.png",
-    "wordPdf": "Awaiting user PDF export for full layout verification",
+    "wordPdf": "Background PDF layout reviewed: report 31 pages, corrections 16 pages, calculation 1 page. Exported on copies with headless LibreOffice; Word-specific pagination and TestVKR of final version are not confirmed.",
     "starumlScreenshots": "Awaiting user screenshots; document images are generated illustrations",
     "postmanHeadersScreenshot": "Awaiting user screenshot",
     "nativeNetworkCapture": "Awaiting user Wireshark/tcpdump capture",

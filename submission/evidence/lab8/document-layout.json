@@ -1,0 +1,10 @@
+{
+  "renderer": "LibreOffice headless on copies; no native UI",
+  "pages": {
+    "report": 31,
+    "corrections": 16,
+    "calculation": 1
+  },
+  "review": "All pages visually inspected; TOC page numbers matched; no images outside page",
+  "testvkr": "Previous version 3: one title warning; final version not checked in TestVKR"
+}

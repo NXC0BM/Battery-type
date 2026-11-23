@@ -117,8 +117,8 @@ def title(d,subtitle):
  p(d);centered(d,'Москва 2026',14)
  page(d)
 
-def tz_title(d):
- h(d,'Приложение А Техническое задание')
+def tz_title(d,sheets=6,heading='Приложение А Техническое задание'):
+ h(d,heading)
  centered(d,'МОСКОВСКИЙ ГОСУДАРСТВЕННЫЙ ТЕХНИЧЕСКИЙ УНИВЕРСИТЕТ',14)
  centered(d,'имени Н. Э. Баумана',14,after=16)
  centered(d,'Кафедра систем обработки информации и управления',14,after=16)
@@ -135,7 +135,7 @@ def tz_title(d):
  centered(d,'Вид документа',12,after=14)
  centered(d,'Писчая бумага',14)
  centered(d,'Вид носителя',12,after=14)
- centered(d,'6',14)
+ centered(d,str(sheets),14)
  centered(d,'Количество листов',12,after=14)
  centered(d,'ИСПОЛНИТЕЛЬ',14)
  centered(d,'Рыбин М. А.',14)

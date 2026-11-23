@@ -13,7 +13,7 @@ print('Postman failures:',report['run']['summary']['tests']['failed'])
 assert report['run']['summary']['tests']['failed']==0
 assert report['run']['summary']['executedRequests']['errors']==0
 archive=Path('C:/Web/battery_type_ЛР8.zip')
-legacy={'РПЗ_и_ТЗ_исправлено.docx','Исправлено_по_замечаниям.docx','Расчёт_116_пользователей.docx'}
+legacy={'РПЗ_и_ТЗ_исправлено.docx','Исправлено_по_замечаниям.docx','Расчёт_116_пользователей.docx','РПЗ_ЛР8_проверка3.docx','Исправлено_ЛР8.docx'}
 with ZipFile(archive,'w',ZIP_DEFLATED) as z:
  for f in root.rglob('*'):
   relative=f.relative_to(root)
@@ -23,6 +23,6 @@ with ZipFile(archive,'w',ZIP_DEFLATED) as z:
 assert (root/'native/battery_type-native.exe').exists(),'Native executable missing from local delivery'
 with ZipFile(archive,'r') as z:
  assert 'native/battery_type-native.exe' in z.namelist()
- assert 'РПЗ_ЛР8_проверка3.docx' in z.namelist()
+ assert 'РПЗ_ЛР8_готово.docx' in z.namelist()
  assert z.testzip() is None,'Damaged ZIP entry'
 print('ZIP',archive.stat().st_size)
