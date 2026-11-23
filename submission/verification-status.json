@@ -54,7 +54,7 @@
     "apiUrl": "http://192.168.1.128:53000/api"
   },
   "manual": {
-    "testvkr": "Version 2: title mismatch with КуР mode and short abstract; version 3 has expanded abstract, awaiting repeat check",
+    "testvkr": "Version 3 checked by user in КуР mode: one remaining warning, Ошибка в наименовании работы. No other warnings shown. See evidence/lab8/testvkr-third.png",
     "wordPdf": "Awaiting user PDF export for full layout verification",
     "starumlScreenshots": "Awaiting user screenshots; document images are generated illustrations",
     "postmanHeadersScreenshot": "Awaiting user screenshot",
