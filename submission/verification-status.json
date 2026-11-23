@@ -1,0 +1,65 @@
+{
+  "date": "2026-11-23",
+  "api": {
+    "passed": true,
+    "totalRows": 100107,
+    "checks": [
+      "Pagination + EAV numeric capacity filter",
+      "Pagination validation",
+      "100 unique numbered cards cached in Redis for guest cookie",
+      "New batch after 100, without previous batch cards",
+      "Asyncio HTTP callback after 7 seconds, previous-angle formula",
+      "Callback key + compare-and-set rejects stale update",
+      "Session login + idempotent like + cancel",
+      "Logout invalidates session",
+      "English CLIP descriptions 50–100 characters",
+      "100000+ rows; topic fields stored only in EAV",
+      "Real EXPLAIN ANALYZE with/without capacity index; index restored by ROLLBACK"
+    ]
+  },
+  "browser": {
+    "passed": true,
+    "checks": [
+      "catalog loads API",
+      "pagination changes",
+      "session login",
+      "Three.js canvas",
+      "delayed rotation visible",
+      "Redux page retained on return",
+      "390px no horizontal overflow",
+      "logout"
+    ]
+  },
+  "clip": {
+    "passed": true,
+    "metric": "(1 + cosine) / 2",
+    "threshold": 0.63,
+    "topK": 3,
+    "result": "Найдено: 2. Близость (1 + cos) / 2: 0.639, 0.632, 0.625"
+  },
+  "postman": {
+    "requests": 27,
+    "assertions": 29,
+    "failed": 0
+  },
+  "pages": {
+    "url": "https://nxc0bm.github.io/Battery-type-frontend/#/battery_type",
+    "passed": true,
+    "apiRequests": 0
+  },
+  "native": {
+    "built": true,
+    "workflow": "https://github.com/NXC0BM/Battery-type-native/actions/runs/45237088489",
+    "sha256": "5F6E84A255F04D87B6D23CEB65AFF45C47C2304CA5BAF8147BB1CE80A45915AE",
+    "apiUrl": "http://192.168.1.128:53000/api"
+  },
+  "manual": {
+    "testvkr": "Version 2: title mismatch with КуР mode and short abstract; version 3 has expanded abstract, awaiting repeat check",
+    "wordPdf": "Awaiting user PDF export for full layout verification",
+    "starumlScreenshots": "Awaiting user screenshots; document images are generated illustrations",
+    "postmanHeadersScreenshot": "Awaiting user screenshot",
+    "nativeNetworkCapture": "Awaiting user Wireshark/tcpdump capture",
+    "classInterfaces": "Exact extra formatting requirements awaiting Nikita",
+    "printedPaper": "Print one arXiv source and annotate translated terms by hand"
+  }
+}

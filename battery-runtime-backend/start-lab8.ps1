@@ -1,7 +1,7 @@
 $ErrorActionPreference='Stop'
 Set-Location -LiteralPath $PSScriptRoot
 if(-not(Test-Path -LiteralPath '.env')){Copy-Item -LiteralPath '.env.example' -Destination '.env'}
-docker compose -p battery-type-review -f compose.review.yml up -d
+docker compose -p battery-type-review -f compose.review.yml up -d --wait
 if($LASTEXITCODE){throw 'Запусти Docker Desktop и повтори'}
 npm.cmd ci
 if($LASTEXITCODE){throw 'npm ci failed'}

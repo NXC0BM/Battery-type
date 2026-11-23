@@ -18,8 +18,10 @@ def shot(name,caption,width=15):
 sections={}
 h(d,'РЕФЕРАТ')
 p(d,'Работа посвящена разработке системы battery_type для ведения каталога типов аккумуляторов. Объект рассмотрения — сведения о моделях, ёмкости, номинальном напряжении и характеристиках аккумуляторов. Цель — реализовать веб-сервис NestJS, веб-интерфейс React и гостевое нативное приложение. Использованы PostgreSQL, Redis, MinIO, Redux Toolkit, Axios, Three.js, Tauri и Python asyncio. Разработаны фильтрация и пагинация, серверные сессии, публикация, идемпотентные лайки, поиск CLIP и отложенное вращение модели. Проверки выполнены на отдельной базе со 100 100 синтетическими записями. Подготовлены пять диаграмм, техническое задание, описание методов и расчёт ресурсов для 116 пользователей. Результат предназначен для учебного сценария ведения и просмотра каталога; электрическая совместимость и фактическое время разряда устройством не определяются автоматически.')
+p(d,'При проектировании разделены сведения о типе аккумулятора, общий справочник характеристик и индивидуальные значения. Ёмкость и напряжение перенесены из основной таблицы в вертикальную таблицу значений, что позволяет добавлять характеристики без изменения структуры каталога. Уникальные ограничения сохраняют одну отметку пользователя на тип и одно значение характеристики. Доступ к публикации и удалению ограничен владельцем записи. На клиенте сохраняются выбранная ёмкость и номер страницы; ошибки доступа и загрузки отображаются пользователю.')
+p(d,'В экспериментальной части исследован запрос с числовым отбором ёмкости при включённом и отключённом индексе. Проверены неповторяющиеся наборы из ста карточек в Redis и формирование следующего набора. Асинхронный сервис передаёт результат через HTTP после семисекундной задержки, а клиент отображает его посредством периодического опроса. Автоматическая проверка Postman выполнила 27 запросов и 29 проверок без ошибок. Загруженная GLTF модель прочитана из MinIO и отображена в Three.js; нативное приложение собрано для Windows. Для поиска по изображению рассмотрены английские описания и нормированное косинусное сходство. Практический результат — согласованный набор программ и документации для учебной демонстрации работы каталога.')
 p(d,'Ключевые слова: ТИП АККУМУЛЯТОРА, ЁМКОСТЬ, НАПРЯЖЕНИЕ, КАТАЛОГ, NESTJS, REDIS, CLIP, TAURI, ASYNCIO.')
-page(d);h(d,'СОДЕРЖАНИЕ')
+page(d);toc_title=d.add_paragraph('СОДЕРЖАНИЕ','TOC Heading');toc_title.style.font.name='Times New Roman';toc_title.style.font.size=Pt(14);toc_title.style.font.bold=True;toc_title.style.font.color.rgb=RGBColor(0,0,0)
 from docx.enum.text import WD_TAB_ALIGNMENT,WD_TAB_LEADER
 toc_entries=[('ВВЕДЕНИЕ',4),('1 ПРЕДМЕТНАЯ ОБЛАСТЬ',6),('2 АРХИТЕКТУРА',9),('2.1 Таблицы базы данных',12),('3 АЛГОРИТМЫ',16),('3.1 Расчёт аппаратных требований',19),('3.2 Проверка дополнительных алгоритмов',21),('4 ОПИСАНИЕ ИНТЕРФЕЙСА',22),('ЗАКЛЮЧЕНИЕ',25),('СПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ',26),('Приложение А Техническое задание',28),('Приложение Б Методы веб сервиса',32)]
 for i,(text,num) in enumerate(toc_entries):
@@ -186,10 +188,10 @@ for domain,rows in [('battery_type',[r for r in api8 if '/battery_type' in r[2]]
 p(d,'BatteryTypeDto: id: integer; modelName: string; shortDescription, imageUrl, videoUrl, modelUrl, shortDescriptionEn: string|null; capacityMah: integer|null; nominalVoltageV: number|null; rotationX, rotationY: number; likesCount: integer; isMine, isLiked: 0|1; attributes: [{id: integer, code: string|null, name: string, value: string, unit: string|null}]. Лента может дополнять feedPosition, feedBatch и rotationJob.')
 h(d,'Отдельный сервис asyncio',2);table(d,['Метод и URL','Вход','Выход'],[['POST /battery_type/rotation','batteryTypeId: integer>0','202: {batteryTypeId: integer, delaySeconds: number, status: scheduled}; 400/404']],[5.3,5.3,5.4],11)
 p(d,'Cookie включена для методов создателя. JSON передаётся с Content-Type: application/json. Для multipart boundary формирует клиент. Заголовок X-Battery-Type-Key используется только у callback основного сервиса.')
-save(d,OUT/'РПЗ_ЛР8_проверка2.docx')
+save(d,OUT/'РПЗ_ЛР8_проверка3.docx')
 c=new_doc('Расчёт аппаратных требований ЛР8 для 116 пользователей');c.styles['Normal'].font.size=Pt(11);c.styles['Normal'].paragraph_format.line_spacing=1.15;c.styles['Normal'].paragraph_format.space_after=Pt(5)
 h(c,'Расчёт ресурсов ЛР8 для 116 пользователей')
 for line in calc8:p(c,line)
 save(c,OUT/'Расчёт_116_пользователей_ЛР8.docx')
 (OUT/'api-table-lab8.json').write_text(json.dumps(api8,ensure_ascii=False,indent=2),encoding='utf-8')
-print('Created LR8 RPZ', (OUT/'РПЗ_ЛР8_проверка2.docx').stat().st_size,'bytes')
+print('Created LR8 RPZ', (OUT/'РПЗ_ЛР8_проверка3.docx').stat().st_size,'bytes')

@@ -1,0 +1,35 @@
+{
+  "url": "https://nxc0bm.github.io/Battery-type-frontend/#/battery_type",
+  "images": [
+    {
+      "src": "./DefaultImage.jpg",
+      "loaded": true
+    },
+    {
+      "src": "./DefaultImage.jpg",
+      "loaded": true
+    },
+    {
+      "src": "./DefaultImage.jpg",
+      "loaded": true
+    },
+    {
+      "src": "./DefaultImage.jpg",
+      "loaded": true
+    },
+    {
+      "src": "./DefaultImage.jpg",
+      "loaded": true
+    },
+    {
+      "src": "./DefaultImage.jpg",
+      "loaded": true
+    },
+    {
+      "src": "./DefaultImage.jpg",
+      "loaded": true
+    }
+  ],
+  "apiRequests": [],
+  "errors": []
+}

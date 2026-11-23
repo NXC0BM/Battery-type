@@ -7,9 +7,19 @@ services:
       POSTGRES_PASSWORD: battery_type_local
     ports: ["127.0.0.1:55432:5432"]
     volumes: ["battery_type_review_pg:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U battery_type -d battery_type_review"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
   redis:
     image: redis:7
     ports: ["127.0.0.1:56379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
   minio:
     image: minio/minio:latest
     command: server /data --console-address :9001
