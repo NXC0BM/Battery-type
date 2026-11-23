@@ -1,0 +1,23 @@
+{
+  "reference": "Accepted Chekhovich RPZ supplied by user",
+  "classDiagrams": 1,
+  "interfaces": [
+    "API battery_type",
+    "API users"
+  ],
+  "notation": "StarUML icon with dependencies and interface realizations produces ball and socket",
+  "layers": [
+    "Фронтенд",
+    "Бэкенд",
+    "Модель",
+    "База данных"
+  ],
+  "lifelines": [
+    "Фронтенд",
+    "Домен users",
+    "Домен battery_type"
+  ],
+  "callSignaturesVerified": 8,
+  "referencesValid": true,
+  "nativeUiOpened": false
+}

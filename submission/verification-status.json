@@ -59,7 +59,7 @@
     "starumlScreenshots": "Awaiting user screenshots; document images are generated illustrations",
     "postmanHeadersScreenshot": "Awaiting user screenshot",
     "nativeNetworkCapture": "Awaiting user Wireshark/tcpdump capture",
-    "classInterfaces": "Exact extra formatting requirements awaiting Nikita",
+    "classInterfaces": "Applied accepted Chekhovich RPZ reference: four layers, two icon API interfaces, sequence frontend/users/battery_type",
     "printedPaper": "Print one arXiv source and annotate translated terms by hand"
   }
 }

@@ -32,7 +32,7 @@ font=lambda n,b=False:ImageFont.truetype(boldpath if b else fontpath,n)
 class_img=Image.new('RGB',(1840,1560),'white');draw=ImageDraw.Draw(class_img)
 positions={}; views={}
 def box_image(d,x,y,w,title,lines,size=19):
- h=46+len(lines)*26; d.rectangle((x,y,x+w,y+h),outline='black',width=2);d.line((x,y+38,x+w,y+38),fill='black',width=2)
+ h=46+max(1,len(lines))*26; d.rectangle((x,y,x+w,y+h),outline='black',width=2);d.line((x,y+38,x+w,y+38),fill='black',width=2)
  d.text((x+10,y+8),title,font=font(size,True),fill='black')
  for i,s in enumerate(lines):d.text((x+10,y+46+i*26),s,font=font(size-1),fill='black')
  return h
@@ -65,18 +65,41 @@ def class_node(name,x,y,w=260,lines=None,t='UMLClass',attributes_mode=False):
  class_d['ownedViews'].append(v);positions[c['_id']]=(x,y,w,v['height']);views[c['_id']]=v
  box_image(draw,x,y,w,name,lines,18)
  return c
-pages=[class_node('Плитка battery_type',30,80,280,['GridPage','GET /api/battery_type']),class_node('Лента battery_type',90,230,280,['FeedPage','GET /api/battery_type/feed']),class_node('Добавление battery_type',30,380,280,['AddPage','GET draft; POST model; PUT publish']),class_node('Вход users',90,530,280,['LoginPage','POST register/login/logout'])]
+# Accepted reference: four layers with two ball/socket API interfaces.
+class_img=Image.new('RGB',(1840,1780),'white');draw=ImageDraw.Draw(class_img)
+def package(name,x,y,w,h):
+ e=obj('UMLPackage',model,name=name,ownedElements=[]);model['ownedElements'].append(e)
+ v=obj('UMLPackageView',class_d,model=ref(e),left=x,top=y,width=w,height=h,font='Arial;18;1',subViews=[])
+ comp=obj('UMLNameCompartmentView',v,model=ref(e),left=x,top=y+10,width=w,height=30,subViews=[])
+ for key,text in [('nameLabel',name),('stereotypeLabel',''),('namespaceLabel',''),('propertyLabel','')]:
+  label=obj('LabelView',comp,text=text,visible=key=='nameLabel',left=x+8,top=y+8,width=w-16,height=26,font='Arial;18;1',horizontalAlignment=2);comp['subViews'].append(label);comp[key]=ref(label)
+ v['subViews'].append(comp);v['nameCompartment']=ref(comp);class_d['ownedViews'].append(v)
+ draw.rectangle((x,y,x+w,y+h),outline='black',width=2);draw.rectangle((x,y-22,x+210,y),outline='black',width=2);draw.text((x+w/2-95,y+8),name,font=font(26,True),fill='black')
+ return e
+def move(c,pkg):
+ model['ownedElements'].remove(c);pkg['ownedElements'].append(c);c['_parent']=ref(pkg)
+front=package('Фронтенд',35,55,1770,310)
+back=package('Бэкенд',35,530,1770,420)
+mod=package('Модель',35,1050,1770,230)
+db=package('База данных',35,1430,1770,220)
+pages=[class_node('Страница плитки',95,115,350),class_node('Страница ленты',495,235,350),class_node('Страница добавления',895,115,400),class_node('Страница входа',1390,235,350)]
+for c in pages:move(c,front)
 battery_ops=['GET /api/battery_type','GET /api/battery_type/feed','GET /api/battery_type/draft','POST /api/battery_type','PUT /api/battery_type/:id/publish','DELETE /api/battery_type/:id','POST /api/battery_type/:id/like','GET /api/battery_type/descriptions','PUT /api/battery_type/:id/rotation']
 user_ops=['POST /api/users/register','POST /api/users/login','POST /api/users/logout']
-bi=class_node('API battery_type',490,120,420,battery_ops,t='UMLInterface');ui=class_node('API users',490,530,420,user_ops,t='UMLInterface')
-bc=class_node('Домен battery_type',960,80,820,battery_ops);uc=class_node('Домен users',960,450,820,user_ops)
-async_node=class_node('Asyncio battery_type',960,650,820,['POST /battery_type/rotation'])
-native_node=class_node('Tauri guest / CLIP worker',30,680,440,['GridPage, FeedPage','CLIP text + image embeddings'])
-ops={op['name']:op for c in [bc,uc,async_node] for op in c['operations']}
+bc=class_node('Домен battery_type',75,590,1010,battery_ops);uc=class_node('Домен users',1220,590,550,user_ops)
+for c in [bc,uc]:move(c,back)
+# Two UMLInterface models with icon notation. Operations belong to domain classes.
+bi=class_node('API battery_type',550,435,60,t='UMLInterface');ui=class_node('API users',1510,435,60,t='UMLInterface')
+for c in [bi,ui]:
+ v=views[c['_id']];v['stereotypeDisplay']='icon';v['width']=60;v['height']=60;v['suppressOperations']=True
+# Redraw the icon band, replacing helper rectangles with ball/socket symbols.
+draw.rectangle((0,385,1839,506),fill='white')
+for x,label,tx in [(580,'API battery_type',285),(1540,'API users',1600)]:
+ draw.ellipse((x-22,443,x+22,487),outline='black',width=3);draw.arc((x-36,429,x+36,501),180,360,fill='black',width=3);draw.text((tx,450),label,font=font(25,True),fill='black')
+ops={op['name']:op for c in [bc,uc] for op in c['operations']}
 models=[];tables=[]
-fields=[['id','modelName','shortDescription','status','imageUrl','videoUrl','createdAt','publishedAt','completedAt','modelUrl','shortDescriptionEn','rotationX','rotationY','creator','moderator','attributes','likes'],['id','code','name','unit'],['id','batteryType','attribute','value'],['id','user','batteryType'],['id','username','password']]
-for i,(name,table) in enumerate([('BatteryType','battery_type'),('Attribute','attributes'),('BatteryTypeAttribute','battery_type_attributes'),('Like','likes'),('User','users')]):
- models.append(class_node(name,30+i*360,830,330,fields[i],attributes_mode=True));tables.append(class_node(table,30+i*360,1370,330))
+for i,(name,table) in enumerate([('Attribute','attributes'),('BatteryTypeAttribute','battery_type_attributes'),('BatteryType','battery_type'),('Like','likes'),('User','users')]):
+ m=class_node(name,75+i*350,1130,315);t=class_node(table,75+i*350,1510,315);move(m,mod);move(t,db);models.append(m);tables.append(t)
 def arrow(d,a,b,dashed=True):
  x1,y1=a;x2,y2=b
  if dashed:
@@ -86,28 +109,26 @@ def arrow(d,a,b,dashed=True):
  else:d.line((x1,y1,x2,y2),fill='black',width=2)
  angle=math.atan2(y2-y1,x2-x1)
  for delta in [-.45,.45]:d.line((x2,y2,x2-13*math.cos(angle+delta),y2-13*math.sin(angle+delta)),fill='black',width=2)
-def dependency(a,b,realize=False):
- rel=obj('UMLInterfaceRealization' if realize else 'UMLDependency',model,source=ref(a),target=ref(b));model['ownedElements'].append(rel)
- xa,ya,wa,ha=positions[a['_id']];xb,yb,wb,hb=positions[b['_id']]
- if xb+wb<xa and b not in models:
-  pa=(xa,ya+ha/2);pb=(xb+wb,yb+hb/2);points=[pa,pb]
- elif a in [bc,uc] and b in models:
-  gutter=1815 if a is bc else 1805
-  pa=(xa+wa,ya+ha/2);pb=(xb+wb/2,yb);points=[pa,(gutter,pa[1]),(gutter,760),(pb[0],760),pb]
- elif yb>ya+ha:
-  pa=(xa+wa/2,ya+ha);pb=(xb+wb/2,yb);points=[pa,pb]
- else:
-  pa=(xa+wa,ya+ha/2);pb=(xb,yb+hb/2);points=[pa,pb]
- edge=obj('UMLInterfaceRealizationView' if realize else 'UMLDependencyView',class_d,model=ref(rel),tail=ref(views[a['_id']]),head=ref(views[b['_id']]),points=';'.join(f'{p[0]}:{p[1]}' for p in points));class_d['ownedViews'].append(edge)
- for start,end in zip(points,points[1:]):arrow(draw,start,end)
-for p in pages[:3]:dependency(p,bi)
-dependency(native_node,bi);dependency(async_node,bi)
-dependency(pages[3],ui);dependency(bc,bi,True);dependency(uc,ui,True)
-for m in models[:4]:dependency(bc,m)
-dependency(uc,models[4])
-for m,t in zip(models,tables):dependency(m,t)
-draw.text((30,15),'Одна диаграмма классов   •   два интерфейса   •   12 методов основного API',font=font(23,True),fill='black')
-draw.text((30,1500),'React + Redux + Axios; Three.js; Tauri / CLIP; Python asyncio. Два интерфейса основного API.',font=font(20),fill='black')
+
+def connect(a,b,pa,pb,kind='UMLDependency',solid=False):
+ rel=obj(kind,model,source=ref(a),target=ref(b));model['ownedElements'].append(rel)
+ vt={'UMLDependency':'UMLDependencyView','UMLInterfaceRealization':'UMLInterfaceRealizationView'}.get(kind,'UMLDependencyView')
+ class_d['ownedViews'].append(obj(vt,class_d,model=ref(rel),tail=ref(views[a['_id']]),head=ref(views[b['_id']]),points=f'{pa[0]}:{pa[1]};{pb[0]}:{pb[1]}'))
+ if solid:draw.line((*pa,*pb),fill='black',width=2)
+ else:arrow(draw,pa,pb)
+for c in pages[:3]:
+ x,y,w,h=positions[c['_id']];connect(c,bi,(x+w/2,y+h),(580,429),solid=True)
+x,y,w,h=positions[pages[3]['_id']];connect(pages[3],ui,(x+w/2,y+h),(1540,429),solid=True)
+connect(bc,bi,(580,590),(580,487),'UMLInterfaceRealization',True);connect(uc,ui,(1540,590),(1540,487),'UMLInterfaceRealization',True)
+for i,m in enumerate(models):
+ x,y,w,h=positions[m['_id']];connect(uc if i==4 else bc,m,(1500,715) if i==4 else (580,870),(x+w/2,y));connect(m,tables[i],(x+w/2,y+h),(x+w/2,1510))
+# Cardinality links between physical tables are associations, not dependencies.
+for ia,ib,ca,cb in [(0,1,'1','0..*'),(1,2,'0..*','1'),(2,3,'1','0..*'),(3,4,'0..*','1')]:
+ a,b=tables[ia],tables[ib];xa,ya,wa,ha=positions[a['_id']];xb,yb,wb,hb=positions[b['_id']]
+ rel=obj('UMLAssociation',model);rel['end1']=obj('UMLAssociationEnd',rel,reference=ref(a),multiplicity=ca);rel['end2']=obj('UMLAssociationEnd',rel,reference=ref(b),multiplicity=cb);model['ownedElements'].append(rel)
+ class_d['ownedViews'].append(obj('UMLAssociationView',class_d,model=ref(rel),tail=ref(views[a['_id']]),head=ref(views[b['_id']]),points=f'{xa+wa}:{ya+25};{xb}:{yb+25}'))
+ draw.line((xa+wa,ya+25,xb,yb+25),fill='black',width=2);draw.text((xa+wa-25,ya-25),ca,font=font(17),fill='black');draw.text((xb-35,yb+43),cb,font=font(17),fill='black')
+draw.text((40,1700),'Одна диаграмма классов. Два API интерфейса. Дополнение asyncio показано на диаграмме развёртывания.',font=font(22),fill='black')
 class_img.save(OUT/'diagrams/classes.png')
 # ER: native ERD models and views.
 erdm=obj('ERDDataModel',project,name='PostgreSQL battery_type',ownedElements=[]);project['ownedElements'].append(erdm)
@@ -154,7 +175,7 @@ erimg.save(OUT/'diagrams/er.png')
 interaction=obj('UMLInteraction',model,name='Публикация и просмотр типа аккумулятора',ownedElements=[]);model['ownedElements'].append(interaction)
 sd=obj('UMLSequenceDiagram',interaction,name='Последовательность три линии жизни',ownedViews=[]);interaction['ownedElements'].append(sd)
 simg=Image.new('RGB',(1740,1530),'white');dd=ImageDraw.Draw(simg);lifelines=[];lv=[]
-for i,(name,c) in enumerate([('Фронтенд',pages[0]),('NestJS battery_type',bc),('Asyncio battery_type',async_node)]):
+for i,(name,c) in enumerate([('Фронтенд',pages[0]),('Домен users',uc),('Домен battery_type',bc)]):
  role=obj('UMLAttribute',interaction,name=name,type=ref(c));interaction['ownedElements'].append(role)
  life=obj('UMLLifeline',interaction,name=name,represent=ref(role));interaction['ownedElements'].append(life);lifelines.append(life)
  v=clone(templates['UMLSeqLifelineView'],sd);dx=110+i*700-v['left'];
@@ -171,11 +192,11 @@ for i,v in enumerate(lv):
  dx=xs[i]-(v['left']+75)
  for a in walk(v):
   if 'left' in a:a['left']+=dx
-steps=[(1,'POST /api/users/login','username, password','200; Set-Cookie'),(1,'GET /api/battery_type','minCapacityMah; page; limit','200; items, total, page, limit'),(1,'GET /api/battery_type/feed','next=true; Cookie','200; item, rotationJob'),(2,'POST /battery_type/rotation','NestJS -> asyncio: batteryTypeId','202; scheduled 7 seconds'),(1,'GET /api/battery_type/feed','asyncio -> NestJS: id; next=false','200; previous angles'),(1,'PUT /api/battery_type/:id/rotation','asyncio -> NestJS after 7 s; key; angles','200; angles persisted'),(1,'GET /api/battery_type/feed','frontend polls id; next=false every 1 s','200; new angles'),(1,'POST /api/battery_type/:id/like','frontend: id; like=1; Cookie','200; likesCount, isLiked=1')]
+steps=[(1,'POST /api/users/login','username; password','200; Set-Cookie: connect.sid'),(2,'GET /api/battery_type','minCapacityMah; page; limit','200; items, total, page, limit'),(2,'POST /api/battery_type','modelName; image; model; Cookie','201; draft'),(2,'GET /api/battery_type/draft','Cookie: connect.sid','200; current draft'),(2,'PUT /api/battery_type/:id/publish','description; capacityMah; nominalVoltageV; Cookie','200; published BatteryTypeDto'),(2,'GET /api/battery_type/feed','next=true; Cookie','200; published BatteryTypeDto'),(2,'GET /api/battery_type/feed','id; next=true; Cookie','200; next BatteryTypeDto'),(2,'POST /api/battery_type/:id/like','id; like=1; Cookie','200; likesCount, isLiked=1')]
 for n,(target,op,args,result) in enumerate(steps):
  y=155+n*160
  for reply in [False,True]:
-  source=1 if n==3 else 2 if n in [4,5] else 0
+  source=0
   src,dst=(target,source) if reply else (source,target); yy=y+65 if reply else y
   msg=obj('UMLMessage',interaction,name=result if reply else op,source=ref(lifelines[src]),target=ref(lifelines[dst]),messageSort='reply' if reply else 'synchCall',arguments='' if reply else args)
   if not reply:msg['signature']=ref(ops[op])
@@ -184,12 +205,14 @@ for n,(target,op,args,result) in enumerate(steps):
   for a in walk(v):
    if 'model' in a:a['model']=ref(msg)
    if a.get('_type')=='EdgeLabelView':a.update(left=min(xs[src],xs[dst])+12,top=yy-28,width=abs(xs[src]-xs[dst])-24,height=22)
-   if a.get('_type')=='UMLActivationView':a.update(left=xs[dst]-7,top=yy,width=14,height=42,visible=not reply)
-  sd['ownedViews'].append(v);arrow(dd,(xs[src],yy),(xs[dst],yy),reply)
+   if a.get('_type')=='UMLActivationView':a.update(left=xs[dst]-7,top=yy,width=14,height=65,visible=not reply)
+  sd['ownedViews'].append(v)
+  if not reply:dd.rectangle((xs[dst]-7,yy,xs[dst]+7,yy+65),fill='white',outline='black',width=2)
+  arrow(dd,(xs[src],yy),(xs[dst],yy),reply)
   label=result if reply else f'{n+1}. {op}'
   dd.text((min(xs[src],xs[dst])+18,yy-26),label,font=font(20),fill='black')
   if not reply:dd.text((210,yy+8),args,font=font(18),fill='black')
-dd.text((40,15),'HTTP бизнес-процесс   •   фронтенд, NestJS и отдельный asyncio-сервис',font=font(23,True),fill='black')
+dd.text((40,15),'Основной HTTP сценарий   •   фронтенд и два домена NestJS',font=font(23,True),fill='black')
 dd.text((40,1480),'БД, MinIO и Redis не являются линиями жизни. signature сообщений связан с операциями диаграммы классов.',font=font(19),fill='black')
 simg.save(OUT/'diagrams/sequence.png')
 # Integrity: unique IDs and all references resolve.
