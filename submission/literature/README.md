@@ -1,8 +1,8 @@
 # Источники по предметной области 2026
 
-1. Rodrigues M.-T. F., McDaniel C., Trask S. E., Abraham D. P. Capacity gain in Li-ion cells with silicon-containing electrodes. 13.02.2026. https://arxiv.org/abs/2602.13478 ; PDF https://arxiv.org/pdf/2602.13478
-2. Masse R. Public Battery Field Data. Версия v3, 16.10.2026. https://arxiv.org/abs/2610.05811v3 ; PDF https://arxiv.org/pdf/2610.05811v3
+1. Wan Z. et al. Modeling and Estimation of Solid Electrolyte Interphase during Formation in Battery Manufacturing. 10.06.2026. https://arxiv.org/abs/2606.12664v1 ; полный PDF https://arxiv.org/pdf/2606.12664v1 . Проверенный файл содержит 6 страниц и выбран для печати.
+2. Masse R. Public Battery Field Data. Версия v3, 16.10.2026. https://arxiv.org/abs/2610.05811v3 . Второй тематический источник РПЗ; для бумажной части выбрана статья [1].
 
-В локальном комплекте PDF загружены рядом; в публичный GitHub их копии не добавляются. Для требования преподавателя нужно распечатать один источник и подписать перевод терминов ручкой. Текст РПЗ не заменяет это ручное действие.
+Папка Для_печати содержит исходный PDF статьи [1] и словарь: по 10 терминов на каждую страницу. Распечатать все 6 страниц односторонне, выделить термины, переводы написать отдельно от руки с номерами страниц. Сам словарь дополнительно печатать не требуется.
 
-Термины: capacity — ёмкость; voltage — напряжение; cell — элемент; battery — батарея; electrode — электрод; researcher — исследователь. Словарь: https://wooordhunt.ru/word/capacity , https://wooordhunt.ru/word/voltage , https://wooordhunt.ru/word/cell . Смысл «элемент» относится к электрохимии, а не биологии.
+Прежняя статья Rodrigues et al., 2602.13478.pdf, сохранена локально для истории; в актуальной РПЗ она заменена источником [1]. Исходные PDF статей не публикуются в Git.

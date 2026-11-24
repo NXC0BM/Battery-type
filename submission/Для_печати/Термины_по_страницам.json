@@ -1,0 +1,254 @@
+{
+  "1": [
+    {
+      "term": "solid electrolyte interphase",
+      "translation": "твёрдоэлектролитный межфазный слой (SEI)"
+    },
+    {
+      "term": "lithium-ion batteries",
+      "translation": "литийионные аккумуляторы"
+    },
+    {
+      "term": "cell formation",
+      "translation": "формирование аккумуляторного элемента"
+    },
+    {
+      "term": "terminal voltage",
+      "translation": "напряжение на выводах элемента"
+    },
+    {
+      "term": "cell expansion",
+      "translation": "расширение элемента, увеличение его толщины"
+    },
+    {
+      "term": "voltage-only measurements",
+      "translation": "измерения только напряжения"
+    },
+    {
+      "term": "state estimation",
+      "translation": "оценивание состояния"
+    },
+    {
+      "term": "observability",
+      "translation": "наблюдаемость"
+    },
+    {
+      "term": "electrode",
+      "translation": "электрод"
+    },
+    {
+      "term": "degradation",
+      "translation": "деградация"
+    }
+  ],
+  "2": [
+    {
+      "term": "anode",
+      "translation": "анод"
+    },
+    {
+      "term": "cathode",
+      "translation": "катод"
+    },
+    {
+      "term": "electrolyte",
+      "translation": "электролит"
+    },
+    {
+      "term": "lithiation",
+      "translation": "литирование, внедрение лития"
+    },
+    {
+      "term": "polarization",
+      "translation": "поляризация"
+    },
+    {
+      "term": "diffusion",
+      "translation": "диффузия"
+    },
+    {
+      "term": "charging",
+      "translation": "заряд"
+    },
+    {
+      "term": "discharge",
+      "translation": "разряд"
+    },
+    {
+      "term": "surface kinetics",
+      "translation": "кинетика поверхностных процессов"
+    },
+    {
+      "term": "side reaction",
+      "translation": "побочная реакция"
+    }
+  ],
+  "3": [
+    {
+      "term": "capacities",
+      "translation": "ёмкости электродов"
+    },
+    {
+      "term": "resistance",
+      "translation": "электрическое сопротивление"
+    },
+    {
+      "term": "capacitance",
+      "translation": "электрическая ёмкость конденсатора"
+    },
+    {
+      "term": "ionic conductivity",
+      "translation": "ионная проводимость"
+    },
+    {
+      "term": "electrode surface area",
+      "translation": "площадь поверхности электрода"
+    },
+    {
+      "term": "temperature",
+      "translation": "температура"
+    },
+    {
+      "term": "current density",
+      "translation": "плотность тока"
+    },
+    {
+      "term": "molar volume",
+      "translation": "молярный объём"
+    },
+    {
+      "term": "diffusion coefficient",
+      "translation": "коэффициент диффузии"
+    },
+    {
+      "term": "state of charge",
+      "translation": "степень заряженности (SOC)"
+    }
+  ],
+  "4": [
+    {
+      "term": "manufacturing variability",
+      "translation": "разброс параметров при производстве"
+    },
+    {
+      "term": "initial states",
+      "translation": "начальные состояния"
+    },
+    {
+      "term": "process noise",
+      "translation": "шум процесса"
+    },
+    {
+      "term": "nonlinear systems",
+      "translation": "нелинейные системы"
+    },
+    {
+      "term": "covariance",
+      "translation": "ковариация"
+    },
+    {
+      "term": "local observability",
+      "translation": "локальная наблюдаемость"
+    },
+    {
+      "term": "uncertain parameters",
+      "translation": "неопределённые параметры"
+    },
+    {
+      "term": "measurements",
+      "translation": "измерения"
+    },
+    {
+      "term": "standard deviations",
+      "translation": "среднеквадратические отклонения"
+    },
+    {
+      "term": "zero-order-hold",
+      "translation": "удержание постоянного входа между отсчётами"
+    }
+  ],
+  "5": [
+    {
+      "term": "sigma points",
+      "translation": "сигма-точки"
+    },
+    {
+      "term": "Kalman gain",
+      "translation": "коэффициент усиления фильтра Калмана"
+    },
+    {
+      "term": "convergence",
+      "translation": "сходимость"
+    },
+    {
+      "term": "parameter uncertainty",
+      "translation": "неопределённость параметров"
+    },
+    {
+      "term": "initial conditions",
+      "translation": "начальные условия"
+    },
+    {
+      "term": "confidence envelopes",
+      "translation": "доверительные полосы"
+    },
+    {
+      "term": "root-mean-square errors",
+      "translation": "среднеквадратические ошибки"
+    },
+    {
+      "term": "real-time monitoring",
+      "translation": "мониторинг в реальном времени"
+    },
+    {
+      "term": "stoichiometries",
+      "translation": "стехиометрические соотношения"
+    },
+    {
+      "term": "residuals",
+      "translation": "невязки, остаточные ошибки"
+    }
+  ],
+  "6": [
+    {
+      "term": "SEI thickness",
+      "translation": "толщина межфазного слоя SEI"
+    },
+    {
+      "term": "biased initial conditions",
+      "translation": "смещённые начальные условия"
+    },
+    {
+      "term": "simulated trajectory",
+      "translation": "траектория, полученная моделированием"
+    },
+    {
+      "term": "current modulation",
+      "translation": "изменение, модуляция тока"
+    },
+    {
+      "term": "reduced-order modeling",
+      "translation": "моделирование с уменьшенным порядком модели"
+    },
+    {
+      "term": "sensitivity analysis",
+      "translation": "анализ чувствительности"
+    },
+    {
+      "term": "current profiles",
+      "translation": "профили тока"
+    },
+    {
+      "term": "electrochemical impedance spectroscopy",
+      "translation": "электрохимическая импедансная спектроскопия"
+    },
+    {
+      "term": "battery durability",
+      "translation": "долговечность аккумулятора"
+    },
+    {
+      "term": "manufacturing cost",
+      "translation": "стоимость производства"
+    }
+  ]
+}

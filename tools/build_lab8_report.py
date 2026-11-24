@@ -58,7 +58,7 @@ paras('''В качестве контекста рассматривается �
 
 Две характеристики по теме — ёмкость и номинальное напряжение. Ёмкость (capacity) выражается в миллиампер-часах и характеризует количество электрического заряда; напряжение (voltage) выражается в вольтах. Их произведение после перевода миллиампер-часов в ампер-часы даёт ориентировочную номинальную энергию в ватт-часах. Такое сравнение не заменяет проверку совместимости по химии, габаритам, току и ограничениям изготовителя. Поля приложения относятся к выбранной модели, а не к результату испытания конкретного элемента.
 
-В статье M.-T. F. Rodrigues и соавторов «Capacity gain in Li-ion cells with silicon-containing electrodes», представленной 13 февраля 2026 года, исследуются причины роста измеряемой ёмкости кремнийсодержащих элементов на раннем сроке эксплуатации. Расчёт и эксперимент связывают наблюдаемые изменения с доступностью активных областей и запасом лития [1]. В проекте это служит основанием различать паспортную характеристику каталога и меняющиеся результаты измерений. Прогнозирование ресурса и вывод о безопасности по одной ёмкости система не выполняет.
+В статье Z. Wan и соавторов «Modeling and Estimation of Solid Electrolyte Interphase during Formation in Battery Manufacturing», представленной 10 июня 2026 года, исследуется рост твёрдоэлектролитного межфазного слоя (solid electrolyte interphase, SEI) при формировании литийионных элементов. Авторы объединяют измерения напряжения и расширения элемента с моделью и фильтром Калмана для оценивания внутреннего состояния [1]. Для каталога важно различать паспортные характеристики типа и измеряемое состояние отдельного элемента. Модель роста SEI в приложении не реализуется; ёмкость и напряжение хранятся как характеристики выбранного типа.
 
 В работе R. Masse цель состоит в систематизации открытых данных батарей в реальной эксплуатации. Результат включает реестр, метаданные и средства чтения разнородных наборов [2]. Понятия «аккумуляторный элемент» (cell), «аккумуляторная батарея» (battery) и «исследователь» (researcher) используются с сохранением различия между уровнем отдельного элемента, системы и роли пользователя. Переводы capacity, voltage, cell, battery и electrode сверены по словарным статьям [4]. Научные данные не используются как доказательство заявленных производителем параметров демонстрационных моделей.
 
@@ -145,7 +145,7 @@ paras('''Разработан каталог типов аккумуляторо
 for text in ['Бэкенд: https://github.com/NXC0BM/Battery-type/tree/battery_type-lab8','Фронтенд: https://github.com/NXC0BM/Battery-type-frontend/tree/battery_type-lab8','Демонстрация mock: https://nxc0bm.github.io/Battery-type-frontend/','Нативное приложение: https://github.com/NXC0BM/Battery-type-native','Асинхронный сервис: https://github.com/NXC0BM/Battery-type-async']:p(d,text)
 chapter('Список использованных источников')
 sources=[
-'Rodrigues M.-T. F., McDaniel C., Trask S. E., Abraham D. P. Capacity gain in Li-ion cells with silicon-containing electrodes. arXiv:2602.13478, 13.02.2026. https://arxiv.org/abs/2602.13478',
+'Wan Z., Movahedi H., Liu W., Ma J., Siegel J. B., Weng A., Stefanopoulou A. Modeling and Estimation of Solid Electrolyte Interphase during Formation in Battery Manufacturing. arXiv:2606.12664v1, 10.06.2026. https://arxiv.org/abs/2606.12664v1',
 'Masse R. Public Battery Field Data. arXiv:2610.05811v3, 16.10.2026. https://arxiv.org/abs/2610.05811v3',
 'DNS. Каталог аккумуляторов и электроники. https://www.dns-shop.ru/',
 'WooordHunt. Англо-русские словарные статьи capacity, voltage, cell, battery, electrode. https://wooordhunt.ru/word/capacity ; https://wooordhunt.ru/word/voltage ; https://wooordhunt.ru/word/cell ; https://wooordhunt.ru/word/battery ; https://wooordhunt.ru/word/electrode',
@@ -160,7 +160,7 @@ sources=[
 'Python. asyncio documentation. https://docs.python.org/3/library/asyncio.html',
 'Канев А. И. Разработка Интернет Приложений. Задания ЛР8. https://github.com/iu5git/Web',
 ]
-for i,s in enumerate(sources,1):p(d,f'{i}. {s} Дата обращения: 23.11.2026.')
+for i,s in enumerate(sources,1):p(d,f'{i}. {s} Дата обращения: '+('24.11.2026.' if i==1 else '23.11.2026.'))
 page(d)
 tz_sheets=actual_pages.get('Приложение Б Методы веб сервиса',30)-actual_pages.get('Приложение А Техническое задание',26)
 tz_title(d,sheets=tz_sheets,heading='ПРИЛОЖЕНИЕ А ТЕХНИЧЕСКОЕ ЗАДАНИЕ')

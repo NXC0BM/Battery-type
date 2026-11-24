@@ -10,3 +10,6 @@ submission/native/*.exe
 
 # Raw captures remain in the local delivery archive; contain local session cookies.
 *.pcap
+
+# Original article is delivered locally for printing, like literature PDFs.
+submission/Для_печати/Статья_2026_для_печати_6_страниц.pdf

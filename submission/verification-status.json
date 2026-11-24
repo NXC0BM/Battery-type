@@ -57,12 +57,12 @@
     "stalePwaCacheMigrated": true
   },
   "manual": {
-    "testvkr": "Final DOCX checked on 2026-11-24 in КуР mode: one remaining warning, Ошибка в наименовании работы. No other warnings shown. See evidence/lab8/testvkr-final-window.png",
-    "wordPdf": "Background PDF layout reviewed: report 32 pages, corrections 18 pages, calculation 1 page. Exported on copies with headless LibreOffice; Word-specific pagination is not confirmed; final DOCX checked with TestVKR, one title warning.",
+    "testvkr": "Last GUI check on 2026-11-24 before article-source update showed only a title warning. User explicitly accepts the title and asked not to change it. No GUI rerun after article update per user no-screen instruction. See evidence/lab8/testvkr-final-window.png",
+    "wordPdf": "Background PDF layout reviewed: report 32 pages, corrections 18 pages, calculation 1 page. Exported on copies with headless LibreOffice; Word-specific pagination is not confirmed; last GUI TestVKR check predates article update; title warning accepted by user.",
     "starumlScreenshots": "Three genuine StarUML window screenshots captured for core ER, classes and sequence; final extra async diagram is generated from native model",
     "postmanHeadersScreenshot": "Genuine Headers screenshot of GET capacity filter with HTTP 200 captured",
     "nativeNetworkCapture": "Real tcpdump PCAP captured through temporary Docker relay; upstream packets target 192.168.1.128:53000; not physical Ethernet",
     "classInterfaces": "Applied accepted Chekhovich RPZ reference: four layers, two icon API interfaces, sequence frontend/users/battery_type",
-    "printedPaper": "Print one arXiv source and annotate translated terms by hand"
+    "printedPaper": "Print all six pages of 2606.12664v1, highlight ten terms on each page, write sixty translations separately by hand"
   }
 }

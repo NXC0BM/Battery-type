@@ -7,6 +7,7 @@
     "calculation": 1
   },
   "review": "All original pages reviewed; changed report 2,3,13,19 and correction 7-10,17-18 reviewed again; new six-page theory reviewed",
-  "testvkr": "Final DOCX checked 2026-11-24 in КуР mode: one title warning; screenshot saved",
-  "docxUnder5MB": true
+  "testvkr": "Last screenshot predates article update. User accepts title warning; no GUI rerun per explicit no-screen instruction.",
+  "docxUnder5MB": true,
+  "articleSync": "2606.12664v1 is source [1] in report and the theory question; report pages 7,8,25 and theory page 3 visually reviewed. Title text and TOC page numbers unchanged."
 }
