@@ -7,3 +7,6 @@ submission/РПЗ_ЛР8.docx
 submission/РПЗ_ЛР8_проверка2.docx
 submission/literature/*.pdf
 submission/native/*.exe
+
+# Raw captures remain in the local delivery archive; contain local session cookies.
+*.pcap

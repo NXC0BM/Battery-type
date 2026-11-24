@@ -1,0 +1,18 @@
+Реальный сетевой захват нативного клиента battery_type
+tcpdump; PCAP открывается в Wireshark.
+Tauri WebView2 -> temporary Docker relay -> 192.168.1.128:53000
+IP пакетов относится к Docker-прокси; исходный адрес API виден в HTTP Host.
+Посторонний трафик не включён. Это не захват физического Ethernet-интерфейса.
+
+GET http://192.168.1.128:53000/api/battery_type?minCapacityMah=0&page=1&limit=24 HTTP/1.1
+Host: 192.168.1.128:53000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0
+GET http://192.168.1.128:53000/api/battery_type/feed?id=1&next=false HTTP/1.1
+Host: 192.168.1.128:53000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0
+
+Ответы:
+HTTP/1.1 304 Not Modified
+HTTP/1.1 304 Not Modified
+
+SHA256: AB0FCBC5557C62BEFA2A96924040231A23EA25D1310D4517C63F74271ABAC7EA

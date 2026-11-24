@@ -1,0 +1,38 @@
+[
+  {
+    "task": "Индексы — бэкенд",
+    "repo": "Battery-type",
+    "branch": "battery_type-extra-indexes",
+    "url": "https://github.com/NXC0BM/Battery-type/tree/battery_type-extra-indexes"
+  },
+  {
+    "task": "Индексы — фронтенд",
+    "repo": "Battery-type-frontend",
+    "branch": "battery_type-extra-indexes",
+    "url": "https://github.com/NXC0BM/Battery-type-frontend/tree/battery_type-extra-indexes"
+  },
+  {
+    "task": "Нативное приложение и CLIP",
+    "repo": "Battery-type-native",
+    "branch": "battery_type-extra-native",
+    "url": "https://github.com/NXC0BM/Battery-type-native/tree/battery_type-extra-native"
+  },
+  {
+    "task": "Асинхронность — основной бэкенд",
+    "repo": "Battery-type",
+    "branch": "battery_type-extra-async",
+    "url": "https://github.com/NXC0BM/Battery-type/tree/battery_type-extra-async"
+  },
+  {
+    "task": "Асинхронность — фронтенд",
+    "repo": "Battery-type-frontend",
+    "branch": "battery_type-extra-async",
+    "url": "https://github.com/NXC0BM/Battery-type-frontend/tree/battery_type-extra-async"
+  },
+  {
+    "task": "Асинхронность — отдельный сервис",
+    "repo": "Battery-type-async",
+    "branch": "battery_type-extra-async",
+    "url": "https://github.com/NXC0BM/Battery-type-async/tree/battery_type-extra-async"
+  }
+]

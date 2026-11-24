@@ -1,0 +1,25 @@
+{
+  "captureTool": "tcpdump 4.99.5 in temporary Alpine Docker TCP relay",
+  "path": "Tauri WebView2 -> temporary Docker relay -> 192.168.1.128:53000",
+  "logicalApiDestination": "http://192.168.1.128:53000/api",
+  "filter": "tcp port 53100 on relay eth0; only this application was configured to use relay",
+  "note": "Capture on relay eth0, not physical Ethernet. With port 53000 the packets show destination 192.168.1.128:53000; source is the Docker relay.",
+  "packets": 24,
+  "requests": [
+    {
+      "request": "GET http://192.168.1.128:53000/api/battery_type?minCapacityMah=0&page=1&limit=24 HTTP/1.1",
+      "host": "192.168.1.128:53000",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0"
+    },
+    {
+      "request": "GET http://192.168.1.128:53000/api/battery_type/feed?id=1&next=false HTTP/1.1",
+      "host": "192.168.1.128:53000",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0"
+    }
+  ],
+  "responses": [
+    "HTTP/1.1 304 Not Modified",
+    "HTTP/1.1 304 Not Modified"
+  ],
+  "pcapSha256": "D2EE2836E563D4DA028C75906D933116343796DE5879CF4C6482A2797E9B6DE6"
+}

@@ -51,4 +51,4 @@ def walk(x):
  elif isinstance(x,list):
   for v in x:yield from walk(v)
 ids=[x['_id'] for x in walk(project) if '_id' in x];assert len(ids)==len(set(ids));assert not {x['$ref'] for x in walk(project) if '$ref' in x}-set(ids)
-(root/'WEB_ALL_IN_ONE_fixed.mdj').write_text(json.dumps(project,ensure_ascii=False,indent=2),encoding='utf-8');print('5 diagrams; references valid')
+(root/'WEB_ALL_IN_ONE_fixed.mdj').write_text(json.dumps(project,ensure_ascii=False,indent=2),encoding='utf-8');print('6 diagrams; references valid')

@@ -18,6 +18,9 @@
     "Домен battery_type"
   ],
   "callSignaturesVerified": 8,
+  "asyncSequence": "Separate three-lifeline interaction with HTTP task, callback and polling",
   "referencesValid": true,
-  "nativeUiOpened": false
+  "nativeUiOpened": true,
+  "nativeUiEvidence": "Core diagrams captured before adding the separate LR8 interaction",
+  "asyncCallSignaturesVerified": 6
 }

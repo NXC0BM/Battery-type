@@ -1,11 +1,12 @@
 {
-  "renderer": "LibreOffice headless on copies; no native UI",
+  "renderer": "Headless LibreOffice on copies; Word-specific pagination not independently verified",
   "pages": {
-    "report": 31,
-    "corrections": 16,
+    "report": 32,
+    "corrections": 18,
+    "theory": 6,
     "calculation": 1
   },
-  "review": "All pages visually inspected; TOC page numbers matched; no images outside page",
-  "testvkr": "Previous version 3: one title warning; final version not checked in TestVKR",
-  "diagramUpdate": "Accepted reference applied; report pages 13 and 16, corrections pages 9 and 10 reviewed again. Page count and TOC unchanged."
+  "review": "All original pages reviewed; changed report 2,3,13,19 and correction 7-10,17-18 reviewed again; new six-page theory reviewed",
+  "testvkr": "Final DOCX checked 2026-11-24 in КуР mode: one title warning; screenshot saved",
+  "docxUnder5MB": true
 }

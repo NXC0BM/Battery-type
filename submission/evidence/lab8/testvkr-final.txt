@@ -1,0 +1,23 @@
+Window: "Предварительная проверка ВКР, НКР, НИР, КуП, КуР МГТУ им. Н. Э. Баумана [сборка 232]", App: TestVkr (7).exe.
+	0 window (окно) Предварительная проверка ВКР, НКР, НИР, КуП, КуР МГТУ им. Н. Э. Баумана [сборка 232] Secondary Actions: Raise
+		1 pane (панель) ID: 526254
+			2 radio button (переключатель) (selectable) Пр ID: 1312780
+			3 radio button (переключатель) (selectable) КуР ID: 46205816
+			4 radio button (переключатель) (selectable) КуП ID: 2950848
+			5 radio button (переключатель) (selectable) НИР ID: 18287330
+			6 radio button (переключатель) (selectable) НКР аспиранта ID: 723606
+			7 radio button (переключатель) (selectable) ВКР специалиста ID: 11668330
+			8 radio button (переключатель) (selectable) ВКР магистра ID: 3475430
+			9 radio button (переключатель) (selectable) ВКР бакалавра ID: 919702
+		140 text field (поле) Value: Файл: C:\Web\Battery-type\submission\РПЗ_ЛР8_готово.docx 1. * Ошибка в наименовании работы. ID: 526258
+			141 scroll bar (полоса прокрутки) (disabled, settable, float) По вертикали Value: 0 ID: NonClientVerticalScrollBar
+				142 button (кнопка) (disabled) Строка вверх ID: UpButton
+				143 button (кнопка) (disabled) Строка вниз ID: DownButton
+		14 title bar (название) (settable, string) Value: Предварительная проверка ВКР, НКР, НИР, КуП, КуР МГТУ им. Н. Э. Баумана [сборка 232]
+			15 menu bar (строка меню) Система ID: MenuBar
+				145 menu item (элемент меню) Система
+			17 button (кнопка) Свернуть
+			18 button (кнопка) Развернуть
+			19 button (кнопка) Закрыть
+
+The focused UI element is 3 radio button (переключатель) (selectable) КуР ID: 46205816.

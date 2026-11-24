@@ -1,0 +1,27 @@
+Ветки дополнительных заданий battery_type
+
+Для списка сдачи старосте: ДЗ/ЛР8; индексы и Redis-лента;
+нативное приложение Tauri с CLIP; межсервисное взаимодействие asyncio.
+
+Теория: два вопроса по ДЗ, вопрос по статье для ОТЛ, по одному вопросу на доп.
+Подготовленные формулировки находятся в Теория_ДЗ_и_допов.docx.
+
+Ветки содержат итоговую накопленную реализацию; это не изолированные варианты без других допов.
+
+Индексы — бэкенд
+https://github.com/NXC0BM/Battery-type/tree/battery_type-extra-indexes
+
+Индексы — фронтенд
+https://github.com/NXC0BM/Battery-type-frontend/tree/battery_type-extra-indexes
+
+Нативное приложение и CLIP
+https://github.com/NXC0BM/Battery-type-native/tree/battery_type-extra-native
+
+Асинхронность — основной бэкенд
+https://github.com/NXC0BM/Battery-type/tree/battery_type-extra-async
+
+Асинхронность — фронтенд
+https://github.com/NXC0BM/Battery-type-frontend/tree/battery_type-extra-async
+
+Асинхронность — отдельный сервис
+https://github.com/NXC0BM/Battery-type-async/tree/battery_type-extra-async

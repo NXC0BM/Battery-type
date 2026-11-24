@@ -87,7 +87,8 @@ for c in pages:move(c,front)
 battery_ops=['GET /api/battery_type','GET /api/battery_type/feed','GET /api/battery_type/draft','POST /api/battery_type','PUT /api/battery_type/:id/publish','DELETE /api/battery_type/:id','POST /api/battery_type/:id/like','GET /api/battery_type/descriptions','PUT /api/battery_type/:id/rotation']
 user_ops=['POST /api/users/register','POST /api/users/login','POST /api/users/logout']
 bc=class_node('Домен battery_type',75,590,1010,battery_ops);uc=class_node('Домен users',1220,590,550,user_ops)
-for c in [bc,uc]:move(c,back)
+async_node=class_node('Asyncio battery_type',1220,790,550,['POST /battery_type/rotation'])
+for c in [bc,uc,async_node]:move(c,back)
 # Two UMLInterface models with icon notation. Operations belong to domain classes.
 bi=class_node('API battery_type',550,435,60,t='UMLInterface');ui=class_node('API users',1510,435,60,t='UMLInterface')
 for c in [bi,ui]:
@@ -96,7 +97,7 @@ for c in [bi,ui]:
 draw.rectangle((0,385,1839,506),fill='white')
 for x,label,tx in [(580,'API battery_type',285),(1540,'API users',1600)]:
  draw.ellipse((x-22,443,x+22,487),outline='black',width=3);draw.arc((x-36,429,x+36,501),180,360,fill='black',width=3);draw.text((tx,450),label,font=font(25,True),fill='black')
-ops={op['name']:op for c in [bc,uc] for op in c['operations']}
+ops={op['name']:op for c in [bc,uc,async_node] for op in c['operations']}
 models=[];tables=[]
 for i,(name,table) in enumerate([('Attribute','attributes'),('BatteryTypeAttribute','battery_type_attributes'),('BatteryType','battery_type'),('Like','likes'),('User','users')]):
  m=class_node(name,75+i*350,1130,315);t=class_node(table,75+i*350,1510,315);move(m,mod);move(t,db);models.append(m);tables.append(t)
@@ -113,13 +114,18 @@ def arrow(d,a,b,dashed=True):
 def connect(a,b,pa,pb,kind='UMLDependency',solid=False):
  rel=obj(kind,model,source=ref(a),target=ref(b));model['ownedElements'].append(rel)
  vt={'UMLDependency':'UMLDependencyView','UMLInterfaceRealization':'UMLInterfaceRealizationView'}.get(kind,'UMLDependencyView')
- class_d['ownedViews'].append(obj(vt,class_d,model=ref(rel),tail=ref(views[a['_id']]),head=ref(views[b['_id']]),points=f'{pa[0]}:{pa[1]};{pb[0]}:{pb[1]}'))
- if solid:draw.line((*pa,*pb),fill='black',width=2)
- else:arrow(draw,pa,pb)
+ points=[pa,pb]
+ if a is uc and b in models:points=[pa,(1818,pa[1]),(1818,1100),(pb[0],1100),pb]
+ class_d['ownedViews'].append(obj(vt,class_d,model=ref(rel),tail=ref(views[a['_id']]),head=ref(views[b['_id']]),points=';'.join(f'{p[0]}:{p[1]}' for p in points)))
+ for start,end in zip(points,points[1:]):
+  if solid:draw.line((*start,*end),fill='black',width=2)
+  else:arrow(draw,start,end)
 for c in pages[:3]:
  x,y,w,h=positions[c['_id']];connect(c,bi,(x+w/2,y+h),(580,429),solid=True)
 x,y,w,h=positions[pages[3]['_id']];connect(pages[3],ui,(x+w/2,y+h),(1540,429),solid=True)
 connect(bc,bi,(580,590),(580,487),'UMLInterfaceRealization',True);connect(uc,ui,(1540,590),(1540,487),'UMLInterfaceRealization',True)
+connect(bc,async_node,(1085,810),(1220,810))
+connect(async_node,bc,(1220,850),(1085,850))
 for i,m in enumerate(models):
  x,y,w,h=positions[m['_id']];connect(uc if i==4 else bc,m,(1500,715) if i==4 else (580,870),(x+w/2,y));connect(m,tables[i],(x+w/2,y+h),(x+w/2,1510))
 # Cardinality links between physical tables are associations, not dependencies.
@@ -128,7 +134,7 @@ for ia,ib,ca,cb in [(0,1,'1','0..*'),(1,2,'0..*','1'),(2,3,'1','0..*'),(3,4,'0..
  rel=obj('UMLAssociation',model);rel['end1']=obj('UMLAssociationEnd',rel,reference=ref(a),multiplicity=ca);rel['end2']=obj('UMLAssociationEnd',rel,reference=ref(b),multiplicity=cb);model['ownedElements'].append(rel)
  class_d['ownedViews'].append(obj('UMLAssociationView',class_d,model=ref(rel),tail=ref(views[a['_id']]),head=ref(views[b['_id']]),points=f'{xa+wa}:{ya+25};{xb}:{yb+25}'))
  draw.line((xa+wa,ya+25,xb,yb+25),fill='black',width=2);draw.text((xa+wa-25,ya-25),ca,font=font(17),fill='black');draw.text((xb-35,yb+43),cb,font=font(17),fill='black')
-draw.text((40,1700),'Одна диаграмма классов. Два API интерфейса. Дополнение asyncio показано на диаграмме развёртывания.',font=font(22),fill='black')
+draw.text((40,1700),'Одна диаграмма классов. Два API интерфейса. Asyncio вызывает основной API по HTTP; прямого доступа к БД нет.',font=font(22),fill='black')
 class_img.save(OUT/'diagrams/classes.png')
 # ER: native ERD models and views.
 erdm=obj('ERDDataModel',project,name='PostgreSQL battery_type',ownedElements=[]);project['ownedElements'].append(erdm)

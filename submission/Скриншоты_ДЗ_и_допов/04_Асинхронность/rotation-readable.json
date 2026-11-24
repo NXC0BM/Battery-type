@@ -1,0 +1,5 @@
+{
+  "before": "Углы: 0.061 / 1.155 рад",
+  "after": "Углы: 0.585 / 1.941 рад",
+  "check": "Visible rotation changed after asyncio callback"
+}
