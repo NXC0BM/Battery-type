@@ -269,7 +269,7 @@
             "url": "{{baseUrl}}/battery_type/{{batteryTypeId}}/publish",
             "body": {
               "mode": "raw",
-              "raw": "{\"shortDescription\": \"Li-ion аккумулятор 18650 для электроинструмента\", \"capacityMah\": 3000, \"nominalVoltageV\": 3.6}",
+              "raw": "{\n  \"shortDescription\": \"Li-ion аккумулятор 18650 для электроинструмента\",\n  \"capacityMah\": 3000,\n  \"nominalVoltageV\": 3.6,\n  \"shortDescriptionEn\": \"Green cylindrical lithium ion battery cell for portable power tools.\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -631,7 +631,7 @@
             "url": "{{baseUrl}}/battery_type/{{lab4DraftId}}/publish",
             "body": {
               "mode": "raw",
-              "raw": "{\"shortDescription\": \"Li-ion аккумулятор 18650 для электроинструмента\", \"capacityMah\": 3000, \"nominalVoltageV\": 3.6}",
+              "raw": "{\n  \"shortDescription\": \"Li-ion аккумулятор 18650 для электроинструмента\",\n  \"capacityMah\": 3000,\n  \"nominalVoltageV\": 3.6,\n  \"shortDescriptionEn\": \"Green cylindrical lithium ion battery cell for portable power tools.\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -678,7 +678,7 @@
             "url": "{{baseUrl}}/battery_type/{{lab4DraftId}}/publish",
             "body": {
               "mode": "raw",
-              "raw": "{\"shortDescription\": \"Li-ion аккумулятор 18650 для электроинструмента\", \"capacityMah\": 3000, \"nominalVoltageV\": 3.6}",
+              "raw": "{\n  \"shortDescription\": \"Li-ion аккумулятор 18650 для электроинструмента\",\n  \"capacityMah\": 3000,\n  \"nominalVoltageV\": 3.6,\n  \"shortDescriptionEn\": \"Green cylindrical lithium ion battery cell for portable power tools.\"\n}",
               "options": {
                 "raw": {
                   "language": "json"

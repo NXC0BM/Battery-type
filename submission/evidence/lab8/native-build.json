@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-25",
+  "workflow": "https://github.com/NXC0BM/Battery-type-native/actions/runs/45600945694",
+  "commit": "178ca37cddaa5d947db97cb8af7f9d5dd6a72bd1",
+  "sha256": "0e417435d2c11c45b9d9d7e6b5bbfda4bd975bee6e9823edca18a26a8f6037c5",
+  "bytes": 14019584,
+  "uiVerified": false,
+  "note": "Windows Actions build. Search checked headlessly in shared React/Worker source; no native window opened per user instruction."
+}

@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-24",
+  "date": "2026-11-25",
   "api": {
     "at": "2026-11-23T18:19:04.541Z",
     "passed": true,
@@ -36,7 +36,16 @@
     "metric": "(1 + cosine) / 2",
     "threshold": 0.63,
     "topK": 3,
-    "result": "Найдено: 2. Близость (1 + cos) / 2: 0.639, 0.632, 0.625"
+    "result": "Найдено: 3. Близость (1 + cos) / 2: 0.639, 0.639, 0.639",
+    "checks": [
+      "Actual CLIP image-to-English-text inference",
+      "24 current-page candidates, no deduplication of cards",
+      "Text vectors cached in Redux",
+      "Repeated query and worker recreation reuse Redux text vectors",
+      "Second page results only from second page",
+      "No descriptions or feed requests"
+    ],
+    "textVectorsComputed": 6
   },
   "postman": {
     "requests": 27,
@@ -49,11 +58,15 @@
     "apiRequests": 0
   },
   "native": {
+    "date": "2026-11-25",
+    "workflow": "https://github.com/NXC0BM/Battery-type-native/actions/runs/45600945694",
+    "commit": "178ca37cddaa5d947db97cb8af7f9d5dd6a72bd1",
+    "sha256": "0e417435d2c11c45b9d9d7e6b5bbfda4bd975bee6e9823edca18a26a8f6037c5",
+    "bytes": 14019584,
+    "uiVerified": false,
+    "note": "Windows Actions build. Search checked headlessly in shared React/Worker source; no native window opened per user instruction.",
     "built": true,
-    "workflow": "https://github.com/NXC0BM/Battery-type-native/actions/runs/45251531395",
-    "sha256": "F08675EC28867CEEFAF7A4C5ECBC80F964A215711DCF54E19BDADCCFAE6933E0",
     "apiUrl": "http://192.168.1.128:53000/api",
-    "uiVerified": true,
     "stalePwaCacheMigrated": true
   },
   "manual": {

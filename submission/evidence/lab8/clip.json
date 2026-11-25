@@ -1,8 +1,124 @@
 {
+  "date": "2026-11-25T11:13:17.100Z",
   "image": "DefaultImage.jpg",
   "metric": "(1 + cosine) / 2",
   "threshold": 0.63,
   "topK": 3,
-  "status": "Найдено: 2. Близость (1 + cos) / 2: 0.639, 0.632, 0.625",
+  "status": "Найдено: 3. Близость (1 + cos) / 2: 0.639, 0.639, 0.639",
+  "checks": [
+    "Actual CLIP image-to-English-text inference",
+    "24 current-page candidates, no deduplication of cards",
+    "Text vectors cached in Redux",
+    "Repeated query and worker recreation reuse Redux text vectors",
+    "Second page results only from second page",
+    "No descriptions or feed requests"
+  ],
+  "textVectorsComputed": 6,
+  "requests": [
+    {
+      "ids": [
+        1,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26
+      ],
+      "cached": 0
+    },
+    {
+      "ids": [
+        1,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26
+      ],
+      "cached": 6
+    },
+    {
+      "ids": [
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50
+      ],
+      "cached": 6
+    }
+  ],
+  "resultIds": [
+    [
+      7,
+      11,
+      15
+    ],
+    [
+      7,
+      11,
+      15
+    ],
+    [
+      27,
+      31,
+      35
+    ]
+  ],
   "errors": []
 }

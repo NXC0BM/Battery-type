@@ -17,7 +17,7 @@ for path in paths:
     p=root/path
     assert p.is_file(),path
     assert 'qa' not in p.relative_to(root).parts,path
-    assert p.suffix.lower() in {'.py','.cjs','.md','.mdj','.json','.docx','.pdf','.png','.txt'} or path=='.gitignore',path
+    assert p.suffix.lower() in {'.py','.cjs','.ts','.sql','.md','.mdj','.json','.docx','.pdf','.png','.txt'} or path=='.gitignore',path
     assert not any(x in path.lower() for x in ['.env','credential','secret','pcap']),path
     data=p.read_bytes()
     if p.suffix=='.docx':

@@ -5,7 +5,7 @@ root=Path('submission'); source=root/'evidence/lab8'; target=root/'Скринш�
 groups={
  '01_ДЗ':['testvkr-final-window.png','report-size.png','staruml-er-window.png','staruml-classes-window.png','staruml-sequence-window.png'],
  '02_Индексы':['grid-readable.png','pagination-readable.png','index-measurements.png','redis-feed.png'],
- '03_Нативное':['native-window.png','native-detail-window.png','clip-search.png','native-lan-api.pcap','native-lan-api.txt'],
+ '03_Нативное':['native-window.png','native-detail-window.png','clip-search.png','clip-page2.png','native-lan-api.pcap','native-lan-api.txt'],
  '04_Асинхронность':['rotation-before-readable.png','rotation-after-readable.png','rotation-readable.json'],
 }
 for group,files in groups.items():

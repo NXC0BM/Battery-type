@@ -36,7 +36,7 @@
     "PUT",
     "/api/battery_type/:id/publish",
     "Публикация своего черновика",
-    "id: integer; shortDescription: string; capacityMah: integer; nominalVoltageV: number; attributes?: array; Cookie; shortDescriptionEn?: ASCII string 50–100",
+    "id: integer; shortDescription: string; capacityMah: integer; nominalVoltageV: number; attributes?: array; Cookie; shortDescriptionEn: ASCII string 50–100",
     "BatteryTypeDto; 200/400/401/403/404"
   ],
   [
@@ -59,7 +59,7 @@
     "11",
     "GET",
     "/api/battery_type/descriptions",
-    "Уникальные английские описания CLIP",
+    "Справочные описания; не для CLIP",
     "Нет",
     "[{id: integer, description: string}]; 200"
   ],

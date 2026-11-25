@@ -35,16 +35,15 @@ export class PublishBatteryTypeDto {
   @Max(99.99)
   nominalVoltageV: number;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     example:
       "Green cylindrical lithium ion battery cell for portable power tools.",
   })
-  @IsOptional()
   @IsString()
   @MinLength(50)
   @MaxLength(100)
   @Matches(/^[\x20-\x7E]+$/)
-  shortDescriptionEn?: string;
+  shortDescriptionEn: string;
 
   // Необязательный набор доп. характеристик (EAV)
   @ApiPropertyOptional({ type: [AttributeValueDto] })
